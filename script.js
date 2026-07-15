@@ -705,13 +705,27 @@ document.addEventListener('DOMContentLoaded', () => {
         statusText.style.color = 'var(--primary)';
 
         try {
-            const dataUrl = canvas.toDataURL('image/png');
+            // Downscale canvas to 1/4 size for better OCR
+            const scale = 0.25;
+            const tempCanvas = document.createElement('canvas');
+            tempCanvas.width = canvas.width * scale;
+            tempCanvas.height = canvas.height * scale;
+            const tCtx = tempCanvas.getContext('2d');
+            
+            // Fill white background just in case
+            tCtx.fillStyle = '#ffffff';
+            tCtx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
+            
+            // Draw original canvas scaled down
+            tCtx.drawImage(canvas, 0, 0, tempCanvas.width, tempCanvas.height);
+            
+            const dataUrl = tempCanvas.toDataURL('image/png');
             const worker = await Tesseract.createWorker('eng');
             
-            // PSM=7 Treat the image as a single text line.
+            // PSM=11 Sparse text. Find as much text as possible in no particular order.
             await worker.setParameters({
                 tessedit_char_whitelist: '0123456789+-*/=xXIl|',
-                tessedit_pageseg_mode: 7
+                tessedit_pageseg_mode: 11
             });
 
             const { data: { text } } = await worker.recognize(dataUrl);
