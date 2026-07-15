@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Albion Loot Calculator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="background-effects">
+        <div class="glow-orb orb-1"></div>
+        <div class="glow-orb orb-2"></div>
+    </div>
+    
+    <main class="calculator-container">
+        <header>
+            <h1>Albion Trader</h1>
+            <p>Калькулятор скупки лута</p>
+        </header>
+
+        <div class="tabs">
+            <button class="tab-btn active" data-tab="classic">Калькулятор</button>
+            <button class="tab-btn" data-tab="drawing">Рисование</button>
+            <button class="tab-btn" data-tab="history">История</button>
+        </div>
+
+        <!-- Classic Tab -->
+        <section id="tab-classic" class="tab-content active">
+            <div class="scrollable-content">
+                <div class="input-section">
+                    <div class="input-group">
+                        <label for="market-value">Рыночная стоимость (Silver)</label>
+                        <div class="input-wrapper">
+                            <input type="text" id="market-value" placeholder="0" inputmode="numeric">
+                            <span class="currency-icon">🪙</span>
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <label for="sale-price">Ожидаемая цена продажи (Silver)</label>
+                        <div class="input-wrapper">
+                            <input type="text" id="sale-price" placeholder="По умолчанию = Рыночной" inputmode="numeric">
+                            <span class="currency-icon">🪙</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="input-section percent-section">
+                    <!-- Tax Toggle -->
+                    <div class="input-group tax-group">
+                        <label>Налог при продаже (Market Tax)</label>
+                        <div class="tax-toggle">
+                            <button class="tax-btn active" data-tax="6.5">Премиум (6.5%)</button>
+                            <button class="tax-btn" data-tax="10.5">Без Прем (10.5%)</button>
+                            <button class="tax-btn" data-tax="0">Нет налога (0%)</button>
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <label>Процент скупки (Ваш дисконт от цены продажи)</label>
+                        <div class="preset-percents">
+                            <button class="percent-btn" data-val="10">-10%</button>
+                            <button class="percent-btn" data-val="15">-15%</button>
+                            <button class="percent-btn active" data-val="20">-20%</button>
+                            <button class="percent-btn" data-val="25">-25%</button>
+                            <button class="percent-btn" data-val="30">-30%</button>
+                        </div>
+                        <div class="custom-percent-wrapper">
+                            <input type="number" id="custom-percent" placeholder="Свой %" value="20" min="0" max="100">
+                            <span class="percent-symbol">%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="results-section">
+                    <div class="result-card primary-result">
+                        <h3>К оплате продавцу</h3>
+                        <div class="amount-display">
+                            <span id="final-payout">0</span>
+                            <span class="currency-icon">🪙</span>
+                        </div>
+                        <button id="copy-btn" class="action-btn">
+                            <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                            Копировать сумму
+                        </button>
+                    </div>
+
+                    <div class="result-card secondary-result">
+                        <h3>Чистый профит (после налогов)</h3>
+                        <div class="amount-display profit-display">
+                            <span id="profit-amount">0</span>
+                            <span class="currency-icon">🪙</span>
+                        </div>
+                        <button id="record-trade-btn" class="action-btn record-btn">
+                            <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+                            Записать сделку
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- History Tab -->
+        <section id="tab-history" class="tab-content">
+            <div class="scrollable-content">
+                <div class="history-section">
+                    <div class="history-header">
+                        <h3>История сессии</h3>
+                        <span id="total-profit-display" class="total-profit">Тотал: +0</span>
+                    </div>
+                    <div class="history-list" id="history-list">
+                        <!-- Trades will be prepended here -->
+                    </div>
+                </div>
+                <button id="reset-btn" class="reset-btn">Очистить историю и сбросить</button>
+            </div>
+        </section>
+
+        <!-- Drawing / Math Notebook Tab -->
+        <section id="tab-drawing" class="tab-content">
+            <div class="scrollable-content">
+                <div class="input-section">
+                    <div class="input-group">
+                        <label>Умный блокнот (рисуйте цифры и знаки)</label>
+                        <p class="helper-text">Напишите пример (например, 100+50=) и нажмите "Посчитать".<br><b>Совет: пишите единицу как простую вертикальную линию <code>|</code></b></p>
+                        <div class="canvas-wrapper math-canvas-wrapper">
+                            <canvas id="drawing-canvas" width="370" height="180"></canvas>
+                            <div class="canvas-controls">
+                                <button id="clear-canvas-btn" class="icon-btn" title="Очистить холст">
+                                    <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none"><path d="M3 6h18"></path><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path></svg>
+                                </button>
+                                <button id="recognize-btn" class="recognize-btn">
+                                    <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                                    Посчитать
+                                </button>
+                            </div>
+                        </div>
+                        <div id="recognition-status" class="status-text math-status">Готов к рисованию</div>
+                    </div>
+                    
+                    <div class="math-result-card">
+                        <h3>Результат вычислений</h3>
+                        <div class="amount-display">
+                            <span id="math-final-result">---</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Load Tesseract.js directly -->
+    <script src="node_modules/tesseract.js/dist/tesseract.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
