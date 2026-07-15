@@ -27,6 +27,8 @@
             <button class="tab-btn active" data-tab="classic" data-i18n="tabCalc">Калькулятор</button>
             <button class="tab-btn" data-tab="drawing" data-i18n="tabDrawing">Рисование</button>
             <button class="tab-btn" data-tab="history" data-i18n="tabHistory">История</button>
+            <button class="tab-btn premium-tab" data-tab="crafting" data-i18n="tabCrafting">🔒 Крафт</button>
+            <button class="tab-btn premium-tab" data-tab="blackmarket" data-i18n="tabBM">🔒 Чёрный Рынок</button>
             <button class="tab-btn" data-tab="settings" data-i18n="tabSettings">Настройки</button>
         </div>
 
@@ -180,6 +182,95 @@
                         <label data-i18n="updateLabel">Обновления программы</label>
                         <div style="margin-top: 8px;">
                             <button id="update-btn" class="update-btn checking" data-i18n="updateChecking">Проверка обновлений...</button>
+                        </div>
+                    </div>
+                    <div class="input-group" style="margin-top: 24px;">
+                        <label data-i18n="premiumKeyLabel">Premium Ключ Активации</label>
+                        <div class="input-wrapper" style="margin-top: 8px;">
+                            <input type="text" id="premium-key-input" placeholder="XXXX-XXXX-XXXX-XXXX">
+                        </div>
+                        <button id="activate-key-btn" class="action-btn" style="margin-top: 8px;" data-i18n="activateBtn">Активировать Premium</button>
+                        <div id="premium-status" style="margin-top: 8px; font-size: 13px;"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Crafting Tab -->
+        <section id="tab-crafting" class="tab-content">
+            <div class="premium-lock" id="lock-crafting">
+                <div class="lock-icon">🔒</div>
+                <h3 data-i18n="premiumRequired">Доступно только в Premium</h3>
+                <p data-i18n="premiumDesc">Активируйте ключ в Настройках, чтобы использовать анализ крафта.</p>
+            </div>
+            <div class="scrollable-content premium-content" id="content-crafting" style="display: none;">
+                <div class="input-section">
+                    <div class="input-group">
+                        <label data-i18n="craftCostLabel">Стоимость ресурсов (Silver)</label>
+                        <div class="input-wrapper">
+                            <input type="text" id="craft-resources-cost" placeholder="0" inputmode="numeric">
+                            <span class="currency-icon">🪙</span>
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <label data-i18n="rrfLabel">Процент возврата ресурсов (RRF %)</label>
+                        <div class="input-wrapper">
+                            <input type="number" id="craft-rrf" placeholder="15.2" min="0" max="100" step="0.1">
+                            <span class="percent-symbol">%</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="results-section">
+                    <div class="result-card primary-result">
+                        <h3 data-i18n="craftRealCost">Реальная себестоимость</h3>
+                        <div class="amount-display">
+                            <span id="craft-final-cost">0</span>
+                            <span class="currency-icon">🪙</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Black Market Tab -->
+        <section id="tab-blackmarket" class="tab-content">
+            <div class="premium-lock" id="lock-blackmarket">
+                <div class="lock-icon">🔒</div>
+                <h3 data-i18n="premiumRequired">Доступно только в Premium</h3>
+                <p data-i18n="premiumDesc">Активируйте ключ в Настройках, чтобы использовать сканер.</p>
+            </div>
+            <div class="scrollable-content premium-content" id="content-blackmarket" style="display: none;">
+                <div class="input-section">
+                    <div class="input-group">
+                        <label data-i18n="serverLabel">Сервер</label>
+                        <select id="bm-server-select" class="styled-select">
+                            <option value="europe">Europe</option>
+                            <option value="west">Americas (West)</option>
+                            <option value="east">Asia (East)</option>
+                        </select>
+                    </div>
+                    <div class="input-group" style="margin-top: 12px;">
+                        <label data-i18n="itemIdLabel">ID предмета (например: T4_BAG)</label>
+                        <div class="input-wrapper">
+                            <input type="text" id="bm-item-id" placeholder="T4_BAG">
+                        </div>
+                        <button id="bm-search-btn" class="action-btn" style="margin-top: 8px;" data-i18n="searchBtn">Найти цену на Чёрном Рынке</button>
+                    </div>
+                </div>
+                <div class="results-section" id="bm-results-section" style="display:none;">
+                    <div class="result-card primary-result">
+                        <h3 data-i18n="bmPriceTitle">Цена ордера покупки (Buy Order)</h3>
+                        <div class="amount-display">
+                            <span id="bm-buy-price">0</span>
+                            <span class="currency-icon">🪙</span>
+                        </div>
+                        <p id="bm-update-time" style="font-size: 12px; color: var(--text-muted); margin-top: 8px;"></p>
+                    </div>
+                    <div class="result-card secondary-result">
+                        <h3 data-i18n="bmSellPriceTitle">Цена продажи (Sell Order)</h3>
+                        <div class="amount-display profit-display" style="color: var(--text-color);">
+                            <span id="bm-sell-price">0</span>
+                            <span class="currency-icon">🪙</span>
                         </div>
                     </div>
                 </div>

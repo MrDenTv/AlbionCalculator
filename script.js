@@ -47,9 +47,23 @@ document.addEventListener('DOMContentLoaded', () => {
             emptyHistory: "Пока нет записей",
             confirmReset: "Точно сбросить калькулятор и очистить историю?",
             tabSettings: "Настройки",
+            tabCrafting: "🔒 Крафт",
+            tabBM: "🔒 Чёрный Рынок",
             langLabel: "Язык интерфейса / Language",
             updateLabel: "Обновления программы",
-            updateInstalling: "Установка..."
+            updateInstalling: "Установка...",
+            premiumKeyLabel: "Premium Ключ Активации",
+            activateBtn: "Активировать Premium",
+            premiumRequired: "Доступно только в Premium",
+            premiumDesc: "Активируйте ключ в Настройках, чтобы использовать эту функцию.",
+            craftCostLabel: "Стоимость ресурсов (Silver)",
+            rrfLabel: "Процент возврата ресурсов (RRF %)",
+            craftRealCost: "Реальная себестоимость",
+            serverLabel: "Сервер",
+            itemIdLabel: "ID предмета (например: T4_BAG)",
+            searchBtn: "Найти цену на Чёрном Рынке",
+            bmPriceTitle: "Цена ордера покупки (Buy Order)",
+            bmSellPriceTitle: "Цена продажи (Sell Order)"
         },
         en: {
             appDesc: "Loot Buying Calculator",
@@ -95,9 +109,23 @@ document.addEventListener('DOMContentLoaded', () => {
             emptyHistory: "No records yet",
             confirmReset: "Are you sure you want to clear the calculator and history?",
             tabSettings: "Settings",
+            tabCrafting: "🔒 Crafting",
+            tabBM: "🔒 Black Market",
             langLabel: "Language / Язык интерфейса",
             updateLabel: "Program Updates",
-            updateInstalling: "Installing..."
+            updateInstalling: "Installing...",
+            premiumKeyLabel: "Premium Activation Key",
+            activateBtn: "Activate Premium",
+            premiumRequired: "Premium Only",
+            premiumDesc: "Activate your key in Settings to use this feature.",
+            craftCostLabel: "Resources Cost (Silver)",
+            rrfLabel: "Resource Return Rate (RRF %)",
+            craftRealCost: "Real Crafting Cost",
+            serverLabel: "Server",
+            itemIdLabel: "Item ID (e.g., T4_BAG)",
+            searchBtn: "Find Black Market Price",
+            bmPriceTitle: "Buy Order Price",
+            bmSellPriceTitle: "Sell Order Price"
         }
     };
 
@@ -184,6 +212,134 @@ document.addEventListener('DOMContentLoaded', () => {
                     ipcRenderer.send('check-for-updates');
                 }, 3000);
             }
+        });
+    }
+
+    // ----- Premium Logic -----
+    const VALID_KEYS = ['ALBION-PRO-2026', 'GENALBION-VIP'];
+    let isPremium = localStorage.getItem('isPremium') === 'true';
+
+    const checkPremiumState = () => {
+        if (isPremium) {
+            document.querySelectorAll('.premium-lock').forEach(el => el.style.display = 'none');
+            document.querySelectorAll('.premium-content').forEach(el => el.style.display = 'block');
+            const status = document.getElementById('premium-status');
+            if (status) {
+                status.textContent = currentLang === 'ru' ? '✅ Premium активирован' : '✅ Premium activated';
+                status.style.color = 'var(--success)';
+            }
+            // Remove locks from tab names
+            const tC = document.querySelector('[data-tab="crafting"]');
+            const tB = document.querySelector('[data-tab="blackmarket"]');
+            if (tC) { tC.textContent = currentLang === 'ru' ? 'Крафт' : 'Crafting'; tC.dataset.i18n = ''; }
+            if (tB) { tB.textContent = currentLang === 'ru' ? 'Чёрный Рынок' : 'Black Market'; tB.dataset.i18n = ''; }
+        }
+    };
+    
+    // Call initially
+    setTimeout(checkPremiumState, 100);
+
+    const activateBtn = document.getElementById('activate-key-btn');
+    const keyInput = document.getElementById('premium-key-input');
+    const statusDiv = document.getElementById('premium-status');
+
+    if (activateBtn && keyInput) {
+        activateBtn.addEventListener('click', () => {
+            const val = keyInput.value.trim().toUpperCase();
+            if (VALID_KEYS.includes(val)) {
+                isPremium = true;
+                localStorage.setItem('isPremium', 'true');
+                checkPremiumState();
+            } else {
+                statusDiv.textContent = currentLang === 'ru' ? '❌ Неверный ключ' : '❌ Invalid key';
+                statusDiv.style.color = 'var(--warning)';
+            }
+        });
+    }
+
+    // ----- Crafting Logic -----
+    const craftCostInput = document.getElementById('craft-resources-cost');
+    const craftRrfInput = document.getElementById('craft-rrf');
+    const craftFinalCost = document.getElementById('craft-final-cost');
+
+    const updateCraftingCost = () => {
+        if(!craftCostInput || !craftRrfInput || !craftFinalCost) return;
+        const costStr = craftCostInput.value.replace(/[^0-9]/g, '');
+        const cost = parseFloat(costStr) || 0;
+        const rrf = parseFloat(craftRrfInput.value) || 0;
+        
+        const finalCost = cost * (1 - (rrf / 100));
+        craftFinalCost.textContent = formatSilver(Math.round(finalCost));
+    };
+
+    if (craftCostInput && craftRrfInput) {
+        craftCostInput.addEventListener('input', (e) => {
+            const cursor = e.target.selectionStart;
+            const originalLength = e.target.value.length;
+            const raw = e.target.value.replace(/[^0-9]/g, '');
+            if (raw) {
+                e.target.value = formatSilver(parseInt(raw));
+            } else {
+                e.target.value = '';
+            }
+            // fix cursor position
+            const diff = e.target.value.length - originalLength;
+            e.target.setSelectionRange(cursor + diff, cursor + diff);
+            updateCraftingCost();
+        });
+        craftRrfInput.addEventListener('input', updateCraftingCost);
+    }
+
+    // ----- Black Market Scanner -----
+    const bmSearchBtn = document.getElementById('bm-search-btn');
+    const bmItemId = document.getElementById('bm-item-id');
+    const bmServerSelect = document.getElementById('bm-server-select');
+    const bmResults = document.getElementById('bm-results-section');
+    const bmBuyPrice = document.getElementById('bm-buy-price');
+    const bmSellPrice = document.getElementById('bm-sell-price');
+    const bmUpdateTime = document.getElementById('bm-update-time');
+
+    if (bmSearchBtn && bmItemId) {
+        bmSearchBtn.addEventListener('click', async () => {
+            const itemId = bmItemId.value.trim().toUpperCase();
+            if (!itemId) return;
+            
+            const server = bmServerSelect.value;
+            let baseUrl = 'https://west.albion-online-data.com';
+            if (server === 'east') baseUrl = 'https://east.albion-online-data.com';
+            if (server === 'europe') baseUrl = 'https://europe.albion-online-data.com';
+
+            bmSearchBtn.textContent = '...';
+            bmSearchBtn.disabled = true;
+
+            try {
+                // Fetch from Albion Data Project API
+                const url = `${baseUrl}/api/v2/stats/prices/${itemId}?locations=Black Market`;
+                const response = await fetch(url);
+                const data = await response.json();
+
+                if (data && data.length > 0) {
+                    const item = data[0];
+                    bmBuyPrice.textContent = formatSilver(item.buy_price_max || 0);
+                    bmSellPrice.textContent = formatSilver(item.sell_price_min || 0);
+                    
+                    if (item.buy_price_max_date) {
+                        bmUpdateTime.textContent = (currentLang === 'ru' ? 'Обновлено: ' : 'Updated: ') + new Date(item.buy_price_max_date).toLocaleString();
+                    }
+                    bmResults.style.display = 'block';
+                } else {
+                    bmBuyPrice.textContent = '0';
+                    bmSellPrice.textContent = '0';
+                    bmUpdateTime.textContent = currentLang === 'ru' ? 'Нет данных' : 'No data';
+                    bmResults.style.display = 'block';
+                }
+            } catch (err) {
+                console.error(err);
+                bmUpdateTime.textContent = 'API Error';
+            }
+
+            bmSearchBtn.textContent = currentLang === 'ru' ? 'Найти цену на Чёрном Рынке' : 'Find Black Market Price';
+            bmSearchBtn.disabled = false;
         });
     }
 
