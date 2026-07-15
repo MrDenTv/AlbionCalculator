@@ -1,6 +1,6 @@
 {
   "name": "albion-calculator",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Albion Loot Calculator",
   "main": "main.js",
   "scripts": {

@@ -4,8 +4,8 @@ const { autoUpdater } = require('electron-updater');
 
 function createWindow() {
     const mainWindow = new BrowserWindow({
-        width: 480,
-        height: 750,
+        width: 600,
+        height: 800,
         minWidth: 400,
         minHeight: 600,
         resizable: true,

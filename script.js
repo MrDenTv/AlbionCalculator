@@ -435,8 +435,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const getPos = (e) => {
         const rect = canvas.getBoundingClientRect();
         return {
-            x: e.clientX - rect.left,
-            y: e.clientY - rect.top
+            x: (e.clientX - rect.left) * (canvas.width / rect.width),
+            y: (e.clientY - rect.top) * (canvas.height / rect.height)
         };
     };
 
