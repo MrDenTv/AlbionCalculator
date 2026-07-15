@@ -128,9 +128,14 @@
                 <div class="input-section">
                     <div class="input-group">
                         <label>Умный блокнот (рисуйте цифры и знаки)</label>
-                        <p class="helper-text">Напишите пример (например, 100+50=) и нажмите "Посчитать".<br><b>Совет: пишите единицу как простую вертикальную линию <code>|</code></b></p>
+                        <p class="helper-text">Напишите пример (например, 100+50=) и нажмите "Посчитать".</p>
                         <div class="canvas-wrapper math-canvas-wrapper">
-                            <canvas id="drawing-canvas" width="370" height="180"></canvas>
+                            <canvas id="drawing-canvas"></canvas>
+                            <div class="canvas-tools">
+                                <button id="undo-btn" class="tool-btn" title="Шаг назад">⟲</button>
+                                <button id="redo-btn" class="tool-btn" title="Шаг вперед">⟳</button>
+                                <button id="eraser-btn" class="tool-btn" title="Ластик">🧽</button>
+                            </div>
                             <div class="canvas-controls">
                                 <button id="clear-canvas-btn" class="icon-btn" title="Очистить холст">
                                     <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none"><path d="M3 6h18"></path><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path></svg>
@@ -148,6 +153,13 @@
                         <h3>Результат вычислений</h3>
                         <div class="amount-display">
                             <span id="math-final-result">---</span>
+                        </div>
+                    </div>
+
+                    <div class="math-history">
+                        <h3>История вычислений</h3>
+                        <div class="history-list" id="math-history-list">
+                            <div class="empty-history">Пока нет записей</div>
                         </div>
                     </div>
                 </div>

@@ -373,7 +373,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // ----- Canvas Drawing Logic (Math Tab) -----
     let isDrawing = false;
+    let canvasHistory = [];
+    let currentStep = -1;
+    let currentBrush = 'pen'; // 'pen' or 'eraser'
+    let mathHistory = [];
     
+    const undoBtn = document.getElementById('undo-btn');
+    const redoBtn = document.getElementById('redo-btn');
+    const eraserBtn = document.getElementById('eraser-btn');
+    const mathHistoryList = document.getElementById('math-history-list');
+
+    // Load math history
+    try {
+        const savedMath = localStorage.getItem('albionCalculatorMathHistory');
+        if (savedMath) mathHistory = JSON.parse(savedMath);
+    } catch(e) {}
+
     const initCanvas = () => {
         ctx.fillStyle = '#ffffff';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -382,14 +397,38 @@ document.addEventListener('DOMContentLoaded', () => {
         ctx.lineJoin = 'round';
         ctx.strokeStyle = '#000000';
     };
+
+    const saveCanvasState = () => {
+        if (currentStep < canvasHistory.length - 1) {
+            canvasHistory = canvasHistory.slice(0, currentStep + 1);
+        }
+        canvasHistory.push(canvas.toDataURL());
+        currentStep++;
+    };
+
+    const restoreCanvasState = (dataUrl) => {
+        const img = new Image();
+        img.onload = () => {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.drawImage(img, 0, 0);
+        };
+        img.src = dataUrl;
+    };
     
     // Resize canvas properly when tab is shown
     tabBtns[1].addEventListener('click', () => {
         setTimeout(() => {
-            const rect = canvas.parentElement.getBoundingClientRect();
-            canvas.width = rect.width;
-            canvas.height = rect.height;
-            initCanvas();
+            if(canvas.width !== canvas.parentElement.getBoundingClientRect().width) {
+                const rect = canvas.parentElement.getBoundingClientRect();
+                canvas.width = rect.width;
+                // Height is fixed in CSS, but we set attribute to match pixel size
+                canvas.height = 350; 
+                initCanvas();
+                canvasHistory = [];
+                currentStep = -1;
+                saveCanvasState();
+            }
+            updateMathHistoryUI();
         }, 50);
     });
 
@@ -419,11 +458,13 @@ document.addEventListener('DOMContentLoaded', () => {
         if (isDrawing) {
             ctx.closePath();
             isDrawing = false;
+            saveCanvasState();
         }
     });
 
     const clearCanvas = () => {
         initCanvas();
+        saveCanvasState();
         statusText.textContent = 'Готов к рисованию';
         statusText.style.color = 'var(--primary)';
         mathFinalResult.textContent = '---';
@@ -431,14 +472,70 @@ document.addEventListener('DOMContentLoaded', () => {
 
     clearCanvasBtn.addEventListener('click', clearCanvas);
 
+    // Tools
+    undoBtn.addEventListener('click', () => {
+        if (currentStep > 0) {
+            currentStep--;
+            restoreCanvasState(canvasHistory[currentStep]);
+        }
+    });
+
+    redoBtn.addEventListener('click', () => {
+        if (currentStep < canvasHistory.length - 1) {
+            currentStep++;
+            restoreCanvasState(canvasHistory[currentStep]);
+        }
+    });
+
+    eraserBtn.addEventListener('click', () => {
+        if (currentBrush === 'pen') {
+            currentBrush = 'eraser';
+            eraserBtn.classList.add('active');
+            ctx.strokeStyle = '#ffffff';
+            ctx.lineWidth = 20;
+        } else {
+            currentBrush = 'pen';
+            eraserBtn.classList.remove('active');
+            ctx.strokeStyle = '#000000';
+            ctx.lineWidth = 8;
+        }
+    });
+
+    // Math History UI
+    const updateMathHistoryUI = () => {
+        if(!mathHistoryList) return;
+        mathHistoryList.innerHTML = '';
+        if (mathHistory.length === 0) {
+            mathHistoryList.innerHTML = '<div class="empty-history">Пока нет записей</div>';
+            return;
+        }
+        mathHistory.slice().reverse().forEach(record => {
+            const el = document.createElement('div');
+            el.className = 'history-item';
+            el.innerHTML = `
+                <div class="history-item-left">
+                    <span class="history-value" style="font-size: 16px;">${record.expr}</span>
+                </div>
+                <div class="history-profit" style="color: var(--success); font-size: 18px;">
+                    = ${record.result}
+                </div>
+            `;
+            mathHistoryList.appendChild(el);
+        });
+    };
+
     // ----- OCR / Tesseract Math Integration -----
     
     const evaluateMath = (expr) => {
         try {
             // Replace visual variants of x/* with *
-            let sanitized = expr.toLowerCase().replace(/[xх]/g, '*').replace(/[^0-9+\-*/.]/g, '');
+            let sanitized = expr.toLowerCase().replace(/[xх]/g, '*').replace(/[^0-9+\-*/.()%]/g, '');
             if (!sanitized) return null;
             
+            // Handle percentages (e.g. 100+20% -> 100 + 100*0.2)
+            // Simplified eval for generic math
+            sanitized = sanitized.replace(/(\d+)%/g, '($1/100)');
+
             const result = new Function('return ' + sanitized)();
             if (!isFinite(result) || isNaN(result)) return null;
             
@@ -455,12 +552,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
         try {
             const dataUrl = canvas.toDataURL('image/png');
-            
             const worker = await Tesseract.createWorker('eng');
             
-            // PSM=6 Assumes a single uniform block of text. Works better for math formulas
+            // PSM=6 Assumes a single uniform block of text.
             await worker.setParameters({
-                tessedit_char_whitelist: '0123456789+-*/=xX ',
+                tessedit_char_whitelist: '0123456789+-*/=xX()%Il|',
                 tessedit_pageseg_mode: 6 
             });
 
@@ -468,7 +564,7 @@ document.addEventListener('DOMContentLoaded', () => {
             await worker.terminate();
 
             // Replace common misreadings of '1'
-            let recognizedText = text.trim().replace(/[\/\|Il]/g, '1');
+            let recognizedText = text.trim().replace(/[Il|]/g, '1');
 
             if (recognizedText.length > 0) {
                 statusText.textContent = 'Распознано: ' + recognizedText;
@@ -478,6 +574,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (calcResult !== null) {
                     statusText.style.color = 'var(--success)';
                     mathFinalResult.textContent = calcResult;
+                    
+                    // Add to history
+                    mathHistory.push({ expr: recognizedText, result: calcResult });
+                    localStorage.setItem('albionCalculatorMathHistory', JSON.stringify(mathHistory));
+                    updateMathHistoryUI();
+
                 } else {
                     statusText.textContent = 'Распознано: ' + recognizedText + ' (Ошибка парсинга)';
                     statusText.style.color = '#f59e0b';
