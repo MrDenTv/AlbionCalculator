@@ -20,8 +20,35 @@ function createWindow() {
     mainWindow.loadFile('index.html');
 
     // Auto update logic
+    autoUpdater.autoDownload = false;
+
+    ipcMain.on('check-for-updates', () => {
+        autoUpdater.checkForUpdates();
+    });
+
+    ipcMain.on('install-update', () => {
+        autoUpdater.quitAndInstall();
+    });
+
+    autoUpdater.on('update-available', () => {
+        mainWindow.webContents.send('update-status', { status: 'available' });
+        autoUpdater.downloadUpdate();
+    });
+
+    autoUpdater.on('update-not-available', () => {
+        mainWindow.webContents.send('update-status', { status: 'latest' });
+    });
+
+    autoUpdater.on('update-downloaded', () => {
+        mainWindow.webContents.send('update-status', { status: 'downloaded' });
+    });
+
+    autoUpdater.on('error', (err) => {
+        mainWindow.webContents.send('update-status', { status: 'error', error: err.message });
+    });
+
     mainWindow.once('ready-to-show', () => {
-        autoUpdater.checkForUpdatesAndNotify();
+        autoUpdater.checkForUpdates();
     });
 }
 

@@ -89,14 +89,21 @@ body {
 }
 
 header {
-    text-align: center;
+    text-align: left;
+    margin-bottom: 24px;
     flex-shrink: 0;
 }
 
+.header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
 header h1 {
-    font-size: 26px;
+    font-size: 28px;
     font-weight: 700;
-    background: linear-gradient(135deg, #fff, var(--primary));
+    background: linear-gradient(135deg, #FFB75E 0%, #ED8F03 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     margin-bottom: 4px;
@@ -107,6 +114,43 @@ header p {
     color: var(--text-muted);
     font-size: 14px;
     font-weight: 500;
+}
+
+.update-btn {
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.update-btn.checking {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--text-muted);
+    cursor: default;
+}
+
+.update-btn.latest {
+    background: rgba(255, 255, 255, 0.05);
+    color: rgba(255, 255, 255, 0.3);
+    cursor: default;
+}
+
+.update-btn.update-available {
+    background: #2ea043;
+    color: #fff;
+}
+
+.update-btn.update-available:hover {
+    background: #2c974b;
+}
+
+.update-btn.error {
+    background: rgba(248, 81, 73, 0.2);
+    color: #ff7b72;
+    cursor: pointer;
 }
 
 /* Tabs */

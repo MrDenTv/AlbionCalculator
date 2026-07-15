@@ -1,4 +1,38 @@
+const { ipcRenderer } = require('electron');
+
 document.addEventListener('DOMContentLoaded', () => {
+    // ----- DOM Elements - Header -----
+    const updateBtn = document.getElementById('update-btn');
+
+    // ----- Auto Updater Logic -----
+    if (updateBtn && ipcRenderer) {
+        updateBtn.addEventListener('click', () => {
+            if (updateBtn.classList.contains('update-available')) {
+                ipcRenderer.send('install-update');
+            } else if (!updateBtn.classList.contains('checking') && !updateBtn.classList.contains('latest')) {
+                updateBtn.textContent = 'Проверка...';
+                updateBtn.className = 'update-btn checking';
+                ipcRenderer.send('check-for-updates');
+            }
+        });
+
+        ipcRenderer.on('update-status', (event, data) => {
+            if (data.status === 'latest') {
+                updateBtn.textContent = 'Последняя версия';
+                updateBtn.className = 'update-btn latest';
+            } else if (data.status === 'available') {
+                updateBtn.textContent = 'Скачивание обновления...';
+                updateBtn.className = 'update-btn checking';
+            } else if (data.status === 'downloaded') {
+                updateBtn.textContent = 'Установить обновление';
+                updateBtn.className = 'update-btn update-available';
+            } else if (data.status === 'error') {
+                updateBtn.textContent = 'Ошибка проверки';
+                updateBtn.className = 'update-btn error';
+            }
+        });
+    }
+
     // ----- DOM Elements - Classic Tab -----
     const marketValueInput = document.getElementById('market-value');
     const salePriceInput = document.getElementById('sale-price');
