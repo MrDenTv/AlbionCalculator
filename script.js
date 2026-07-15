@@ -263,90 +263,116 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // ----- Items Database & Autocomplete -----
+    // ----- Categories & Items Logic -----
     const fs = require('fs');
     const path = require('path');
-    let itemsDb = {};
+    let categories = {};
     
     try {
-        const itemsPath = path.join(__dirname, 'items-min.json');
-        if (fs.existsSync(itemsPath)) {
-            itemsDb = JSON.parse(fs.readFileSync(itemsPath, 'utf8'));
+        const catPath = path.join(__dirname, 'categories.json');
+        if (fs.existsSync(catPath)) {
+            categories = JSON.parse(fs.readFileSync(catPath, 'utf8'));
         }
     } catch (e) {
-        console.error("Failed to load items-min.json", e);
+        console.error("Failed to load categories.json", e);
     }
 
     let craftSelectedItemId = null;
     let bmSelectedItemId = null;
 
-    function setupAutocomplete(inputId, resultsId, displayId, onSelectCallback) {
-        const input = document.getElementById(inputId);
-        const results = document.getElementById(resultsId);
-        const display = document.getElementById(displayId);
-        
-        if (!input || !results) return;
-
-        input.addEventListener('input', () => {
-            const query = input.value.trim().toLowerCase();
-            results.innerHTML = '';
-            if (query.length < 2) {
-                results.style.display = 'none';
-                return;
-            }
-            
-            let matches = [];
-            for (let id in itemsDb) {
-                const nameRu = (itemsDb[id].ru || '').toLowerCase();
-                const nameEn = (itemsDb[id].en || '').toLowerCase();
-                if (nameRu.includes(query) || nameEn.includes(query) || id.toLowerCase().includes(query)) {
-                    matches.push({ id, nameRu: itemsDb[id].ru, nameEn: itemsDb[id].en });
-                }
-                if (matches.length > 50) break; // limit to 50 results
-            }
-
-            if (matches.length > 0) {
-                matches.forEach(m => {
-                    const div = document.createElement('div');
-                    div.className = 'autocomplete-item';
-                    const iconUrl = `https://render.albiononline.com/v1/item/${m.id}.png`;
-                    div.innerHTML = `<img src="${iconUrl}" class="autocomplete-icon" onerror="this.src='icon.png'"> 
-                                     <span>${currentLang === 'ru' ? m.nameRu : m.nameEn}</span>`;
-                    div.addEventListener('click', () => {
-                        input.value = '';
-                        results.style.display = 'none';
-                        display.innerHTML = `<img src="${iconUrl}" onerror="this.src='icon.png'"> 
-                                             <div>
-                                                <strong>${currentLang === 'ru' ? m.nameRu : m.nameEn}</strong><br>
-                                                <small style="color:var(--text-muted)">${m.id}</small>
-                                             </div>`;
-                        display.style.display = 'flex';
-                        if (onSelectCallback) onSelectCallback(m.id);
-                    });
-                    results.appendChild(div);
-                });
-                results.style.display = 'block';
-            } else {
-                results.style.display = 'none';
-            }
-        });
-
-        // Hide when clicking outside
-        document.addEventListener('click', (e) => {
-            if (e.target !== input && e.target !== results && !results.contains(e.target)) {
-                results.style.display = 'none';
-            }
-        });
+    function buildItemId(tier, baseId, enchant) {
+        return `${tier}_${baseId}${enchant}`;
     }
 
-    setupAutocomplete('craft-item-search', 'craft-autocomplete-results', 'craft-selected-item', (id) => {
-        craftSelectedItemId = id;
-    });
+    function updateItemDisplay(prefix) {
+        const catSelect = document.getElementById(`${prefix}-category-select`);
+        const itemSelect = document.getElementById(`${prefix}-item-select`);
+        const tierSelect = document.getElementById(`${prefix}-tier-select`);
+        const enchantSelect = document.getElementById(`${prefix}-enchant-select`);
+        const display = document.getElementById(`${prefix}-selected-item`);
+        
+        if (!catSelect || !itemSelect || !tierSelect || !enchantSelect || !display) return;
+        
+        const catKey = catSelect.value;
+        const baseId = itemSelect.value;
+        const tier = tierSelect.value;
+        const enchant = enchantSelect.value;
+        
+        if (!baseId) {
+            display.style.display = 'none';
+            if(prefix === 'craft') craftSelectedItemId = null;
+            if(prefix === 'bm') bmSelectedItemId = null;
+            return;
+        }
 
-    setupAutocomplete('bm-item-search', 'bm-autocomplete-results', 'bm-selected-item', (id) => {
-        bmSelectedItemId = id;
-        document.getElementById('bm-search-btn').click(); // Auto-search on select
-    });
+        const fullId = buildItemId(tier, baseId, enchant);
+        const iconUrl = `https://render.albiononline.com/v1/item/${fullId}.png`;
+        
+        let itemName = baseId;
+        if(categories[catKey]) {
+            const itemObj = categories[catKey].items.find(i => i.id === baseId);
+            if(itemObj) {
+                itemName = currentLang === 'ru' ? itemObj.nameRu : itemObj.nameEn;
+            }
+        }
+        
+        display.innerHTML = `<img src="${iconUrl}" onerror="this.src='icon.png'"> 
+                             <div>
+                                <strong>${tier} ${itemName} ${enchant.replace('@', '.')}</strong><br>
+                                <small style="color:var(--text-muted)">${fullId}</small>
+                             </div>`;
+        display.style.display = 'flex';
+        
+        if (prefix === 'craft') {
+            craftSelectedItemId = fullId;
+        } else if (prefix === 'bm') {
+            bmSelectedItemId = fullId;
+            // Optionally auto-search on BM?
+            // document.getElementById('bm-search-btn').click();
+        }
+    }
+
+    function populateCategories(prefix) {
+        const catSelect = document.getElementById(`${prefix}-category-select`);
+        const itemSelect = document.getElementById(`${prefix}-item-select`);
+        const tierSelect = document.getElementById(`${prefix}-tier-select`);
+        const enchantSelect = document.getElementById(`${prefix}-enchant-select`);
+        
+        if (!catSelect || !itemSelect) return;
+        
+        catSelect.innerHTML = '';
+        for (const [key, data] of Object.entries(categories)) {
+            const opt = document.createElement('option');
+            opt.value = key;
+            opt.textContent = currentLang === 'ru' ? data.nameRu : data.nameEn;
+            catSelect.appendChild(opt);
+        }
+        
+        const updateItems = () => {
+            const catKey = catSelect.value;
+            itemSelect.innerHTML = '';
+            if (categories[catKey]) {
+                categories[catKey].items.forEach(item => {
+                    const opt = document.createElement('option');
+                    opt.value = item.id;
+                    opt.textContent = currentLang === 'ru' ? item.nameRu : item.nameEn;
+                    itemSelect.appendChild(opt);
+                });
+            }
+            updateItemDisplay(prefix);
+        };
+        
+        catSelect.addEventListener('change', updateItems);
+        itemSelect.addEventListener('change', () => updateItemDisplay(prefix));
+        if(tierSelect) tierSelect.addEventListener('change', () => updateItemDisplay(prefix));
+        if(enchantSelect) enchantSelect.addEventListener('change', () => updateItemDisplay(prefix));
+        
+        // Init
+        updateItems();
+    }
+
+    populateCategories('craft');
+    populateCategories('bm');
 
     // ----- Crafting Logic -----
     const craftCostInput = document.getElementById('craft-resources-cost');
@@ -425,7 +451,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
             try {
                 // Fetch from Albion Data Project API
-                const url = `${baseUrl}/api/v2/stats/prices/${itemId}?locations=Black Market`;
+                const quality = document.getElementById('bm-quality-select') ? document.getElementById('bm-quality-select').value : '1';
+                const url = `${baseUrl}/api/v2/stats/prices/${itemId}?locations=Black Market&qualities=${quality}`;
                 const response = await fetch(url);
                 const data = await response.json();
 

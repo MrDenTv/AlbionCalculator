@@ -23,7 +23,7 @@
             </div>
         </header>
 
-        <div class="tabs">
+        <div class="nav-tabs">
             <button class="tab-btn active" data-tab="classic" data-i18n="tabCalc">Калькулятор</button>
             <button class="tab-btn" data-tab="drawing" data-i18n="tabDrawing">Рисование</button>
             <button class="tab-btn" data-tab="history" data-i18n="tabHistory">История</button>
@@ -206,13 +206,29 @@
             <div class="scrollable-content premium-content" id="content-crafting" style="display: none;">
                 <div class="input-section">
                     <div class="input-group">
-                        <label data-i18n="itemSearchLabel">Предмет</label>
-                        <div class="autocomplete-wrapper" style="position: relative; margin-top: 8px;">
-                            <input type="text" id="craft-item-search" placeholder="Начните вводить (напр: Сумка)" autocomplete="off">
-                            <div id="craft-autocomplete-results" class="autocomplete-dropdown"></div>
+                        <label data-i18n="itemSelectLabel">Выберите предмет</label>
+                        <div style="display: flex; gap: 8px; margin-top: 8px;">
+                            <select id="craft-category-select" class="styled-select" style="margin-top:0; flex:1;"></select>
+                            <select id="craft-item-select" class="styled-select" style="margin-top:0; flex:1;"></select>
+                        </div>
+                        <div style="display: flex; gap: 8px; margin-top: 8px;">
+                            <select id="craft-tier-select" class="styled-select" style="margin-top:0; flex:1;">
+                                <option value="T4">Tier 4</option>
+                                <option value="T5">Tier 5</option>
+                                <option value="T6">Tier 6</option>
+                                <option value="T7">Tier 7</option>
+                                <option value="T8">Tier 8</option>
+                            </select>
+                            <select id="craft-enchant-select" class="styled-select" style="margin-top:0; flex:1;">
+                                <option value="">.0 (Нет)</option>
+                                <option value="@1">.1 (Зеленый)</option>
+                                <option value="@2">.2 (Синий)</option>
+                                <option value="@3">.3 (Фиол)</option>
+                                <option value="@4">.4 (Золото)</option>
+                            </select>
                         </div>
                     </div>
-                    <div id="craft-selected-item" class="selected-item-display" style="display:none; margin-top: 12px;"></div>
+                    <div id="craft-selected-item" class="selected-item-display" style="margin-top: 12px; display:flex;"></div>
                     
                     <div class="input-group" style="margin-top: 16px;">
                         <label data-i18n="cityLabel">Город крафта</label>
@@ -248,7 +264,7 @@
                     <div class="result-card primary-result" style="background: rgba(255,255,255,0.05); border: 1px solid var(--border-color);">
                         <h3 data-i18n="calculatedRrfLabel">Фактический возврат (RRF %)</h3>
                         <div class="amount-display">
-                            <span id="craft-calculated-rrf" style="color: var(--warning);">15.2</span>
+                            <span id="craft-calculated-rrf" class="fixed-width-amount" style="color: var(--warning);">15.2</span>
                             <span class="percent-symbol">%</span>
                         </div>
                     </div>
@@ -281,13 +297,38 @@
                         </select>
                     </div>
                     <div class="input-group" style="margin-top: 16px;">
-                        <label data-i18n="itemSearchLabel">Предмет</label>
-                        <div class="autocomplete-wrapper" style="position: relative; margin-top: 8px;">
-                            <input type="text" id="bm-item-search" placeholder="Начните вводить (напр: Сумка)" autocomplete="off">
-                            <div id="bm-autocomplete-results" class="autocomplete-dropdown"></div>
+                        <label data-i18n="itemSelectLabel">Выберите предмет</label>
+                        <div style="display: flex; gap: 8px; margin-top: 8px;">
+                            <select id="bm-category-select" class="styled-select" style="margin-top:0; flex:1;"></select>
+                            <select id="bm-item-select" class="styled-select" style="margin-top:0; flex:1;"></select>
+                        </div>
+                        <div style="display: flex; gap: 8px; margin-top: 8px;">
+                            <select id="bm-tier-select" class="styled-select" style="margin-top:0; flex:1;">
+                                <option value="T4">Tier 4</option>
+                                <option value="T5">Tier 5</option>
+                                <option value="T6">Tier 6</option>
+                                <option value="T7">Tier 7</option>
+                                <option value="T8">Tier 8</option>
+                            </select>
+                            <select id="bm-enchant-select" class="styled-select" style="margin-top:0; flex:1;">
+                                <option value="">.0 (Нет)</option>
+                                <option value="@1">.1 (Зеленый)</option>
+                                <option value="@2">.2 (Синий)</option>
+                                <option value="@3">.3 (Фиол)</option>
+                                <option value="@4">.4 (Золото)</option>
+                            </select>
+                        </div>
+                        <div style="margin-top: 8px;">
+                            <select id="bm-quality-select" class="styled-select" style="margin-top:0;">
+                                <option value="1" data-i18n="qualityNormal">Обычное (Normal)</option>
+                                <option value="2" data-i18n="qualityGood">Хорошее (Good)</option>
+                                <option value="3" data-i18n="qualityOutstanding">Выдающееся (Outstanding)</option>
+                                <option value="4" data-i18n="qualityExcellent">Отличное (Excellent)</option>
+                                <option value="5" data-i18n="qualityMasterpiece">Шедевр (Masterpiece)</option>
+                            </select>
                         </div>
                     </div>
-                    <div id="bm-selected-item" class="selected-item-display" style="display:none; margin-top: 12px;"></div>
+                    <div id="bm-selected-item" class="selected-item-display" style="margin-top: 12px; display:flex;"></div>
                     
                     <button id="bm-search-btn" class="action-btn" style="margin-top: 16px;" data-i18n="searchBtn">Обновить цену на Чёрном Рынке</button>
                 </div>
