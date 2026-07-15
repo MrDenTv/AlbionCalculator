@@ -173,30 +173,18 @@ header p {
 /* Tabs Layout */
 .nav-tabs {
     display: flex;
+    flex-wrap: wrap;
     gap: 8px;
     padding: 6px;
     background: rgba(0, 0, 0, 0.4);
     border: 1px solid var(--border-color);
     border-radius: 12px;
     margin-bottom: 24px;
-    overflow-x: auto;
-    white-space: nowrap;
-    scrollbar-width: thin;
-}
-
-.nav-tabs::-webkit-scrollbar {
-    height: 4px;
-}
-.nav-tabs::-webkit-scrollbar-track {
-    background: transparent;
-}
-.nav-tabs::-webkit-scrollbar-thumb {
-    background: rgba(255,255,255,0.2);
-    border-radius: 4px;
 }
 
 .tab-btn {
-    flex: 0 0 auto;
+    flex: 1 1 auto;
+    text-align: center;
     background: transparent;
     border: none;
     color: var(--text-muted);
