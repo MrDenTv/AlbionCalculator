@@ -45,7 +45,10 @@ document.addEventListener('DOMContentLoaded', () => {
             mathResultTitle: "Результат вычислений",
             mathHistoryTitle: "История вычислений",
             emptyHistory: "Пока нет записей",
-            confirmReset: "Точно сбросить калькулятор и очистить историю?"
+            confirmReset: "Точно сбросить калькулятор и очистить историю?",
+            tabSettings: "Настройки",
+            langLabel: "Язык интерфейса / Language",
+            updateLabel: "Обновления программы"
         },
         en: {
             appDesc: "Loot Buying Calculator",
@@ -89,7 +92,10 @@ document.addEventListener('DOMContentLoaded', () => {
             mathResultTitle: "Calculation Result",
             mathHistoryTitle: "Math History",
             emptyHistory: "No records yet",
-            confirmReset: "Are you sure you want to clear the calculator and history?"
+            confirmReset: "Are you sure you want to clear the calculator and history?",
+            tabSettings: "Settings",
+            langLabel: "Language / Язык интерфейса",
+            updateLabel: "Program Updates"
         }
     };
 

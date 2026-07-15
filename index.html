@@ -20,10 +20,6 @@
                     <h1>Albion Trader</h1>
                     <p data-i18n="appDesc">Калькулятор скупки лута</p>
                 </div>
-                <div class="header-actions" style="display:flex; gap:8px; align-items:center;">
-                    <button id="lang-btn" class="lang-btn">RU</button>
-                    <button id="update-btn" class="update-btn checking" data-i18n="updateChecking">Проверка обновлений...</button>
-                </div>
             </div>
         </header>
 
@@ -31,6 +27,7 @@
             <button class="tab-btn active" data-tab="classic" data-i18n="tabCalc">Калькулятор</button>
             <button class="tab-btn" data-tab="drawing" data-i18n="tabDrawing">Рисование</button>
             <button class="tab-btn" data-tab="history" data-i18n="tabHistory">История</button>
+            <button class="tab-btn" data-tab="settings" data-i18n="tabSettings">Настройки</button>
         </div>
 
         <!-- Classic Tab -->
@@ -163,6 +160,26 @@
                         <h3 data-i18n="mathHistoryTitle">История вычислений</h3>
                         <div class="history-list" id="math-history-list">
                             <!-- Math trades -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Settings Tab -->
+        <section id="tab-settings" class="tab-content">
+            <div class="scrollable-content">
+                <div class="input-section">
+                    <div class="input-group">
+                        <label data-i18n="langLabel">Язык интерфейса / Language</label>
+                        <div style="margin-top: 8px;">
+                            <button id="lang-btn" class="lang-btn">RU</button>
+                        </div>
+                    </div>
+                    <div class="input-group" style="margin-top: 24px;">
+                        <label data-i18n="updateLabel">Обновления программы</label>
+                        <div style="margin-top: 8px;">
+                            <button id="update-btn" class="update-btn checking" data-i18n="updateChecking">Проверка обновлений...</button>
                         </div>
                     </div>
                 </div>
