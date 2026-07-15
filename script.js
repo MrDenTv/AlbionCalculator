@@ -533,7 +533,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const initCanvas = () => {
         ctx.fillStyle = '#ffffff';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
-        ctx.lineWidth = 8;
+        ctx.lineWidth = 18;
         ctx.lineCap = 'round';
         ctx.lineJoin = 'round';
         ctx.strokeStyle = '#000000';
@@ -633,12 +633,12 @@ document.addEventListener('DOMContentLoaded', () => {
             currentBrush = 'eraser';
             eraserBtn.classList.add('active');
             ctx.strokeStyle = '#ffffff';
-            ctx.lineWidth = 20;
+            ctx.lineWidth = 36;
         } else {
             currentBrush = 'pen';
             eraserBtn.classList.remove('active');
             ctx.strokeStyle = '#000000';
-            ctx.lineWidth = 8;
+            ctx.lineWidth = 18;
         }
     });
 
@@ -695,10 +695,10 @@ document.addEventListener('DOMContentLoaded', () => {
             const dataUrl = canvas.toDataURL('image/png');
             const worker = await Tesseract.createWorker('eng');
             
-            // PSM=6 Assumes a single uniform block of text.
+            // PSM=7 Treat the image as a single text line.
             await worker.setParameters({
-                tessedit_char_whitelist: '0123456789+-*/=xX()%Il|',
-                tessedit_pageseg_mode: 6 
+                tessedit_char_whitelist: '0123456789+-*/=xXIl|',
+                tessedit_pageseg_mode: 7
             });
 
             const { data: { text } } = await worker.recognize(dataUrl);
