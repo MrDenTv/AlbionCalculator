@@ -18,16 +18,19 @@
             <div class="header-top">
                 <div class="title-wrap">
                     <h1>Albion Trader</h1>
-                    <p>Калькулятор скупки лута</p>
+                    <p data-i18n="appDesc">Калькулятор скупки лута</p>
                 </div>
-                <button id="update-btn" class="update-btn checking">Проверка обновлений...</button>
+                <div class="header-actions" style="display:flex; gap:8px; align-items:center;">
+                    <button id="lang-btn" class="lang-btn">RU</button>
+                    <button id="update-btn" class="update-btn checking" data-i18n="updateChecking">Проверка обновлений...</button>
+                </div>
             </div>
         </header>
 
         <div class="tabs">
-            <button class="tab-btn active" data-tab="classic">Калькулятор</button>
-            <button class="tab-btn" data-tab="drawing">Рисование</button>
-            <button class="tab-btn" data-tab="history">История</button>
+            <button class="tab-btn active" data-tab="classic" data-i18n="tabCalc">Калькулятор</button>
+            <button class="tab-btn" data-tab="drawing" data-i18n="tabDrawing">Рисование</button>
+            <button class="tab-btn" data-tab="history" data-i18n="tabHistory">История</button>
         </div>
 
         <!-- Classic Tab -->
@@ -35,16 +38,16 @@
             <div class="scrollable-content">
                 <div class="input-section">
                     <div class="input-group">
-                        <label for="market-value">Рыночная стоимость (Silver)</label>
+                        <label for="market-value" data-i18n="marketValue">Рыночная стоимость (Silver)</label>
                         <div class="input-wrapper">
                             <input type="text" id="market-value" placeholder="0" inputmode="numeric">
                             <span class="currency-icon">🪙</span>
                         </div>
                     </div>
                     <div class="input-group">
-                        <label for="sale-price">Ожидаемая цена продажи (Silver)</label>
+                        <label for="sale-price" data-i18n="salePrice">Ожидаемая цена продажи (Silver)</label>
                         <div class="input-wrapper">
-                            <input type="text" id="sale-price" placeholder="По умолчанию = Рыночной" inputmode="numeric">
+                            <input type="text" id="sale-price" placeholder="По умолчанию = Рыночной" data-i18n-placeholder="salePricePlaceholder" inputmode="numeric">
                             <span class="currency-icon">🪙</span>
                         </div>
                     </div>
@@ -53,16 +56,16 @@
                 <div class="input-section percent-section">
                     <!-- Tax Toggle -->
                     <div class="input-group tax-group">
-                        <label>Налог при продаже (Market Tax)</label>
+                        <label data-i18n="marketTax">Налог при продаже (Market Tax)</label>
                         <div class="tax-toggle">
-                            <button class="tax-btn active" data-tax="6.5">Премиум (6.5%)</button>
-                            <button class="tax-btn" data-tax="10.5">Без Прем (10.5%)</button>
-                            <button class="tax-btn" data-tax="0">Нет налога (0%)</button>
+                            <button class="tax-btn active" data-tax="6.5" data-i18n="taxPremium">Премиум (6.5%)</button>
+                            <button class="tax-btn" data-tax="10.5" data-i18n="taxNormal">Без Прем (10.5%)</button>
+                            <button class="tax-btn" data-tax="0" data-i18n="taxNone">Нет налога (0%)</button>
                         </div>
                     </div>
 
                     <div class="input-group">
-                        <label>Процент скупки (Ваш дисконт от цены продажи)</label>
+                        <label data-i18n="discount">Процент скупки (Ваш дисконт от цены продажи)</label>
                         <div class="preset-percents">
                             <button class="percent-btn" data-val="10">-10%</button>
                             <button class="percent-btn" data-val="15">-15%</button>
@@ -71,7 +74,7 @@
                             <button class="percent-btn" data-val="30">-30%</button>
                         </div>
                         <div class="custom-percent-wrapper">
-                            <input type="number" id="custom-percent" placeholder="Свой %" value="20" min="0" max="100">
+                            <input type="number" id="custom-percent" placeholder="Свой %" data-i18n-placeholder="customPercent" value="20" min="0" max="100">
                             <span class="percent-symbol">%</span>
                         </div>
                     </div>
@@ -79,26 +82,26 @@
 
                 <div class="results-section">
                     <div class="result-card primary-result">
-                        <h3>К оплате продавцу</h3>
+                        <h3 data-i18n="payoutTitle">К оплате продавцу</h3>
                         <div class="amount-display">
                             <span id="final-payout">0</span>
                             <span class="currency-icon">🪙</span>
                         </div>
                         <button id="copy-btn" class="action-btn">
                             <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
-                            Копировать сумму
+                            <span data-i18n="copyBtn">Копировать сумму</span>
                         </button>
                     </div>
 
                     <div class="result-card secondary-result">
-                        <h3>Чистый профит (после налогов)</h3>
+                        <h3 data-i18n="profitTitle">Чистый профит (после налогов)</h3>
                         <div class="amount-display profit-display">
                             <span id="profit-amount">0</span>
                             <span class="currency-icon">🪙</span>
                         </div>
                         <button id="record-trade-btn" class="action-btn record-btn">
                             <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
-                            Записать сделку
+                            <span data-i18n="recordBtn">Записать сделку</span>
                         </button>
                     </div>
                 </div>
@@ -111,14 +114,14 @@
             <div class="scrollable-content">
                 <div class="history-section">
                     <div class="history-header">
-                        <h3>История сессии</h3>
-                        <span id="total-profit-display" class="total-profit">Тотал: +0</span>
+                        <h3 data-i18n="historyTitle">История сессии</h3>
+                        <span id="total-profit-display" class="total-profit" data-i18n="historyTotal">Тотал: 0</span>
                     </div>
                     <div class="history-list" id="history-list">
                         <!-- Trades will be prepended here -->
                     </div>
                 </div>
-                <button id="reset-btn" class="reset-btn">Очистить историю и сбросить</button>
+                <button id="reset-btn" class="reset-btn" data-i18n="resetHistoryBtn">Очистить историю и сбросить</button>
             </div>
         </section>
 
@@ -127,39 +130,39 @@
             <div class="scrollable-content">
                 <div class="input-section">
                     <div class="input-group">
-                        <label>Умный блокнот (рисуйте цифры и знаки)</label>
-                        <p class="helper-text">Напишите пример (например, 100+50=) и нажмите "Посчитать".</p>
+                        <label data-i18n="drawTitle">Умный блокнот (рисуйте цифры и знаки)</label>
+                        <p class="helper-text" data-i18n="drawDesc">Напишите пример (например, 100+50=) и нажмите "Посчитать".</p>
                         <div class="canvas-wrapper math-canvas-wrapper">
                             <canvas id="drawing-canvas"></canvas>
                             <div class="canvas-tools">
-                                <button id="undo-btn" class="tool-btn" title="Шаг назад">⟲</button>
-                                <button id="redo-btn" class="tool-btn" title="Шаг вперед">⟳</button>
-                                <button id="eraser-btn" class="tool-btn" title="Ластик">🧽</button>
+                                <button id="undo-btn" class="tool-btn" title="Шаг назад" data-i18n-title="undoTitle">⟲</button>
+                                <button id="redo-btn" class="tool-btn" title="Шаг вперед" data-i18n-title="redoTitle">⟳</button>
+                                <button id="eraser-btn" class="tool-btn" title="Ластик" data-i18n-title="eraserTitle">🧽</button>
                             </div>
                             <div class="canvas-controls">
-                                <button id="clear-canvas-btn" class="icon-btn" title="Очистить холст">
+                                <button id="clear-canvas-btn" class="icon-btn" title="Очистить холст" data-i18n-title="clearTitle">
                                     <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none"><path d="M3 6h18"></path><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path></svg>
                                 </button>
                                 <button id="recognize-btn" class="recognize-btn">
                                     <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-                                    Посчитать
+                                    <span data-i18n="calcBtn">Посчитать</span>
                                 </button>
                             </div>
                         </div>
-                        <div id="recognition-status" class="status-text math-status">Готов к рисованию</div>
+                        <div id="recognition-status" class="status-text math-status" data-i18n="drawReady">Готов к рисованию</div>
                     </div>
                     
                     <div class="math-result-card">
-                        <h3>Результат вычислений</h3>
+                        <h3 data-i18n="mathResultTitle">Результат вычислений</h3>
                         <div class="amount-display">
                             <span id="math-final-result">---</span>
                         </div>
                     </div>
 
                     <div class="math-history">
-                        <h3>История вычислений</h3>
+                        <h3 data-i18n="mathHistoryTitle">История вычислений</h3>
                         <div class="history-list" id="math-history-list">
-                            <div class="empty-history">Пока нет записей</div>
+                            <!-- Math trades -->
                         </div>
                     </div>
                 </div>

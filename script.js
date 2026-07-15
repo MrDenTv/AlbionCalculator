@@ -1,6 +1,141 @@
 const { ipcRenderer } = require('electron');
 
 document.addEventListener('DOMContentLoaded', () => {
+    // ----- Localization (i18n) -----
+    const translations = {
+        ru: {
+            appDesc: "Калькулятор скупки лута",
+            updateChecking: "Проверка обновлений...",
+            updateAvailable: "Установить обновление",
+            updateLatest: "У вас последняя версия",
+            tabCalc: "Калькулятор",
+            tabDrawing: "Рисование",
+            tabHistory: "История",
+            marketValue: "Рыночная стоимость (Silver)",
+            salePrice: "Ожидаемая цена продажи (Silver)",
+            salePricePlaceholder: "По умолчанию = Рыночной",
+            marketTax: "Налог при продаже (Market Tax)",
+            taxPremium: "Премиум (6.5%)",
+            taxNormal: "Без Прем (10.5%)",
+            taxNone: "Нет налога (0%)",
+            discount: "Процент скупки (Ваш дисконт от цены продажи)",
+            customPercent: "Свой %",
+            payoutTitle: "К оплате продавцу",
+            copyBtn: "Копировать сумму",
+            copySuccess: "✓ Скопировано",
+            profitTitle: "Чистый профит (после налогов)",
+            recordBtn: "Записать сделку",
+            recordSuccess: "✓ Записано",
+            historyTitle: "История сессии",
+            historyTotal: "Тотал",
+            resetHistoryBtn: "Очистить историю и сбросить",
+            drawTitle: "Умный блокнот (рисуйте цифры и знаки)",
+            drawDesc: 'Напишите пример (например, 100+50=) и нажмите "Посчитать".',
+            undoTitle: "Шаг назад",
+            redoTitle: "Шаг вперед",
+            eraserTitle: "Ластик",
+            clearTitle: "Очистить холст",
+            calcBtn: "Посчитать",
+            drawReady: "Готов к рисованию",
+            drawAnalysis: "Анализ...",
+            drawRecognized: "Распознано: ",
+            drawError: " (Ошибка парсинга)",
+            drawCalcError: "Ошибка",
+            drawNothing: "Ничего не найдено",
+            mathResultTitle: "Результат вычислений",
+            mathHistoryTitle: "История вычислений",
+            emptyHistory: "Пока нет записей",
+            confirmReset: "Точно сбросить калькулятор и очистить историю?"
+        },
+        en: {
+            appDesc: "Loot Buying Calculator",
+            updateChecking: "Checking for updates...",
+            updateAvailable: "Install Update",
+            updateLatest: "You have the latest version",
+            tabCalc: "Calculator",
+            tabDrawing: "Drawing",
+            tabHistory: "History",
+            marketValue: "Market Value (Silver)",
+            salePrice: "Expected Sale Price (Silver)",
+            salePricePlaceholder: "Default = Market Value",
+            marketTax: "Market Tax",
+            taxPremium: "Premium (6.5%)",
+            taxNormal: "No Premium (10.5%)",
+            taxNone: "No Tax (0%)",
+            discount: "Buying Discount (Your cut)",
+            customPercent: "Custom %",
+            payoutTitle: "Payout to Seller",
+            copyBtn: "Copy Amount",
+            copySuccess: "✓ Copied",
+            profitTitle: "Net Profit (After tax)",
+            recordBtn: "Record Trade",
+            recordSuccess: "✓ Recorded",
+            historyTitle: "Session History",
+            historyTotal: "Total",
+            resetHistoryBtn: "Clear History & Reset",
+            drawTitle: "Smart Notebook (Draw numbers & signs)",
+            drawDesc: 'Write a math expression (e.g. 100+50=) and click "Calculate".',
+            undoTitle: "Undo",
+            redoTitle: "Redo",
+            eraserTitle: "Eraser",
+            clearTitle: "Clear Canvas",
+            calcBtn: "Calculate",
+            drawReady: "Ready to draw",
+            drawAnalysis: "Analyzing...",
+            drawRecognized: "Recognized: ",
+            drawError: " (Parse Error)",
+            drawCalcError: "Error",
+            drawNothing: "Nothing found",
+            mathResultTitle: "Calculation Result",
+            mathHistoryTitle: "Math History",
+            emptyHistory: "No records yet",
+            confirmReset: "Are you sure you want to clear the calculator and history?"
+        }
+    };
+
+    let currentLang = localStorage.getItem('albionCalcLang') || 'ru';
+    
+    const t = (key) => translations[currentLang][key] || key;
+    
+    const setLanguage = (lang) => {
+        currentLang = lang;
+        localStorage.setItem('albionCalcLang', lang);
+        
+        // Update DOM elements with data-i18n
+        document.querySelectorAll('[data-i18n]').forEach(el => {
+            const key = el.getAttribute('data-i18n');
+            if (translations[lang][key]) el.textContent = translations[lang][key];
+        });
+        
+        // Update placeholders
+        document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+            const key = el.getAttribute('data-i18n-placeholder');
+            if (translations[lang][key]) el.placeholder = translations[lang][key];
+        });
+
+        // Update titles
+        document.querySelectorAll('[data-i18n-title]').forEach(el => {
+            const key = el.getAttribute('data-i18n-title');
+            if (translations[lang][key]) el.title = translations[lang][key];
+        });
+
+        // Update dynamic texts
+        updateHistoryUI();
+        updateMathHistoryUI();
+        if (totalProfitDisplay) totalProfitDisplay.textContent = `${t('historyTotal')}: ` + (currentProfitTotal > 0 ? '+' : '') + formatNumber(currentProfitTotal);
+        if (statusText && statusText.textContent === translations[lang === 'ru' ? 'en' : 'ru'].drawReady) statusText.textContent = t('drawReady');
+
+        const langBtn = document.getElementById('lang-btn');
+        if (langBtn) langBtn.textContent = lang === 'ru' ? 'RU' : 'EN';
+    };
+
+    const langBtn = document.getElementById('lang-btn');
+    if (langBtn) {
+        langBtn.addEventListener('click', () => {
+            setLanguage(currentLang === 'ru' ? 'en' : 'ru');
+        });
+    }
+
     // ----- DOM Elements - Header -----
     const updateBtn = document.getElementById('update-btn');
 
@@ -10,7 +145,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (updateBtn.classList.contains('update-available')) {
                 ipcRenderer.send('install-update');
             } else if (!updateBtn.classList.contains('checking') && !updateBtn.classList.contains('latest')) {
-                updateBtn.textContent = 'Проверка...';
+                updateBtn.textContent = t('updateChecking');
                 updateBtn.className = 'update-btn checking';
                 ipcRenderer.send('check-for-updates');
             }
@@ -18,14 +153,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
         ipcRenderer.on('update-status', (event, data) => {
             if (data.status === 'latest') {
-                updateBtn.textContent = 'Последняя версия';
+                updateBtn.textContent = t('updateLatest');
                 updateBtn.className = 'update-btn latest';
             } else if (data.status === 'available') {
                 updateBtn.textContent = 'Скачивание обновления...';
-                updateBtn.className = 'update-btn checking';
-            } else if (data.status === 'downloaded') {
-                updateBtn.textContent = 'Установить обновление';
-                updateBtn.className = 'update-btn update-available';
+                updateBtn.classList.remove('checking');
+                updateBtn.classList.add('available');
+                updateBtn.textContent = t('updateAvailable');
+                updateBtn.onclick = () => ipcRenderer.send('install-update');
             } else if (data.status === 'error') {
                 updateBtn.textContent = 'Ошибка проверки';
                 updateBtn.className = 'update-btn error';
@@ -214,8 +349,8 @@ document.addEventListener('DOMContentLoaded', () => {
         historyList.innerHTML = '';
         
         if (tradesHistory.length === 0) {
-            historyList.innerHTML = '<div class="empty-history">Пока нет записанных сделок</div>';
-            totalProfitDisplay.textContent = 'Тотал: 0';
+            historyList.innerHTML = `<div class="empty-history">${t('emptyHistory')}</div>`;
+            totalProfitDisplay.textContent = `${t('historyTotal')}: 0`;
             totalProfitDisplay.style.color = 'var(--text-muted)';
             totalProfitDisplay.style.background = 'transparent';
             totalProfitDisplay.style.borderColor = 'transparent';
@@ -296,7 +431,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const totalBg = total >= 0 ? 'rgba(16, 185, 129, 0.1)' : 'rgba(239, 68, 68, 0.1)';
         const totalBorder = total >= 0 ? 'rgba(16, 185, 129, 0.2)' : 'rgba(239, 68, 68, 0.2)';
         
-        totalProfitDisplay.textContent = `Тотал: ${totalSign}${formatNumber(total)}`;
+        totalProfitDisplay.textContent = `${t('historyTotal')}: ${totalSign}${formatNumber(total)}`;
         totalProfitDisplay.style.color = totalColor;
         totalProfitDisplay.style.background = totalBg;
         totalProfitDisplay.style.borderColor = totalBorder;
@@ -318,7 +453,7 @@ document.addEventListener('DOMContentLoaded', () => {
         
         // Visual feedback
         const originalText = recordTradeBtn.innerHTML;
-        recordTradeBtn.innerHTML = `✓ Записано`;
+        recordTradeBtn.innerHTML = t('recordSuccess');
         recordTradeBtn.style.background = 'var(--success)';
         recordTradeBtn.style.color = '#fff';
         recordTradeBtn.style.border = 'none';
@@ -344,7 +479,7 @@ document.addEventListener('DOMContentLoaded', () => {
         navigator.clipboard.writeText(payoutText).then(() => {
             const originalContent = copyBtn.innerHTML;
             copyBtn.classList.add('copied');
-            copyBtn.innerHTML = `✓ Скопировано`;
+            copyBtn.innerHTML = t('copySuccess');
             setTimeout(() => {
                 copyBtn.classList.remove('copied');
                 copyBtn.innerHTML = originalContent;
@@ -353,7 +488,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     resetBtn.addEventListener('click', () => {
-        if(confirm('Точно сбросить калькулятор и очистить историю?')) {
+        if(confirm(t('confirmReset'))) {
             marketValueInput.value = '';
             salePriceInput.value = '';
             isSalePriceManuallyEdited = false;
@@ -465,7 +600,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const clearCanvas = () => {
         initCanvas();
         saveCanvasState();
-        statusText.textContent = 'Готов к рисованию';
+        statusText.textContent = t('drawReady');
         statusText.style.color = 'var(--primary)';
         mathFinalResult.textContent = '---';
     };
@@ -506,7 +641,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if(!mathHistoryList) return;
         mathHistoryList.innerHTML = '';
         if (mathHistory.length === 0) {
-            mathHistoryList.innerHTML = '<div class="empty-history">Пока нет записей</div>';
+            mathHistoryList.innerHTML = `<div class="empty-history">${t('emptyHistory')}</div>`;
             return;
         }
         mathHistory.slice().reverse().forEach(record => {
@@ -547,7 +682,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     recognizeBtn.addEventListener('click', async () => {
         recognizeBtn.disabled = true;
-        statusText.textContent = 'Анализ...';
+        statusText.textContent = t('drawAnalysis');
         statusText.style.color = 'var(--primary)';
 
         try {
@@ -567,7 +702,7 @@ document.addEventListener('DOMContentLoaded', () => {
             let recognizedText = text.trim().replace(/[Il|]/g, '1');
 
             if (recognizedText.length > 0) {
-                statusText.textContent = 'Распознано: ' + recognizedText;
+                statusText.textContent = t('drawRecognized') + recognizedText;
                 
                 const calcResult = evaluateMath(recognizedText);
                 
@@ -581,17 +716,17 @@ document.addEventListener('DOMContentLoaded', () => {
                     updateMathHistoryUI();
 
                 } else {
-                    statusText.textContent = 'Распознано: ' + recognizedText + ' (Ошибка парсинга)';
+                    statusText.textContent = t('drawRecognized') + recognizedText + t('drawError');
                     statusText.style.color = '#f59e0b';
-                    mathFinalResult.textContent = 'Ошибка';
+                    mathFinalResult.textContent = t('drawCalcError');
                 }
             } else {
-                statusText.textContent = 'Ничего не найдено';
+                statusText.textContent = t('drawNothing');
                 statusText.style.color = '#ef4444';
             }
         } catch (error) {
             console.error(error);
-            statusText.textContent = 'Ошибка OCR движка';
+            statusText.textContent = t('drawError');
             statusText.style.color = '#ef4444';
         } finally {
             recognizeBtn.disabled = false;
@@ -602,4 +737,5 @@ document.addEventListener('DOMContentLoaded', () => {
     updateHistoryUI();
     calculate();
     marketValueInput.focus();
+    setLanguage(currentLang);
 });
