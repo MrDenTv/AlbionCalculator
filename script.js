@@ -48,7 +48,8 @@ document.addEventListener('DOMContentLoaded', () => {
             confirmReset: "Точно сбросить калькулятор и очистить историю?",
             tabSettings: "Настройки",
             langLabel: "Язык интерфейса / Language",
-            updateLabel: "Обновления программы"
+            updateLabel: "Обновления программы",
+            updateInstalling: "Установка..."
         },
         en: {
             appDesc: "Loot Buying Calculator",
@@ -95,7 +96,8 @@ document.addEventListener('DOMContentLoaded', () => {
             confirmReset: "Are you sure you want to clear the calculator and history?",
             tabSettings: "Settings",
             langLabel: "Language / Язык интерфейса",
-            updateLabel: "Program Updates"
+            updateLabel: "Program Updates",
+            updateInstalling: "Installing..."
         }
     };
 
@@ -148,7 +150,10 @@ document.addEventListener('DOMContentLoaded', () => {
     // ----- Auto Updater Logic -----
     if (updateBtn && ipcRenderer) {
         updateBtn.addEventListener('click', () => {
-            if (updateBtn.classList.contains('update-available')) {
+            if (updateBtn.classList.contains('available')) {
+                updateBtn.textContent = t('updateInstalling');
+                updateBtn.disabled = true;
+                updateBtn.className = 'update-btn';
                 ipcRenderer.send('install-update');
             } else if (!updateBtn.classList.contains('checking') && !updateBtn.classList.contains('latest')) {
                 updateBtn.textContent = t('updateChecking');
@@ -163,13 +168,21 @@ document.addEventListener('DOMContentLoaded', () => {
                 updateBtn.className = 'update-btn latest';
             } else if (data.status === 'available') {
                 updateBtn.textContent = 'Скачивание обновления...';
+                updateBtn.className = 'update-btn checking';
+            } else if (data.status === 'downloaded') {
                 updateBtn.classList.remove('checking');
                 updateBtn.classList.add('available');
                 updateBtn.textContent = t('updateAvailable');
-                updateBtn.onclick = () => ipcRenderer.send('install-update');
+                updateBtn.disabled = false;
             } else if (data.status === 'error') {
                 updateBtn.textContent = 'Ошибка проверки';
                 updateBtn.className = 'update-btn error';
+                updateBtn.disabled = false;
+                setTimeout(() => {
+                    updateBtn.textContent = t('updateChecking');
+                    updateBtn.className = 'update-btn checking';
+                    ipcRenderer.send('check-for-updates');
+                }, 3000);
             }
         });
     }

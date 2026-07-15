@@ -26,7 +26,10 @@ function createWindow() {
         autoUpdater.checkForUpdates();
     });
 
+    let isInstalling = false;
+
     ipcMain.on('install-update', () => {
+        isInstalling = true;
         autoUpdater.quitAndInstall();
     });
 
@@ -44,6 +47,7 @@ function createWindow() {
     });
 
     autoUpdater.on('error', (err) => {
+        if (isInstalling) return;
         mainWindow.webContents.send('update-status', { status: 'error', error: err.message });
     });
 
