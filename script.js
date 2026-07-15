@@ -56,12 +56,15 @@ document.addEventListener('DOMContentLoaded', () => {
             activateBtn: "Активировать Premium",
             premiumRequired: "Доступно только в Premium",
             premiumDesc: "Активируйте ключ в Настройках, чтобы использовать эту функцию.",
-            craftCostLabel: "Стоимость ресурсов (Silver)",
+            craftCostLabel: "Затраты на материалы (Silver)",
             rrfLabel: "Процент возврата ресурсов (RRF %)",
             craftRealCost: "Реальная себестоимость",
+            itemSearchLabel: "Предмет",
+            cityLabel: "Город крафта",
+            useFocusLabel: "Использовать Фокус",
+            calculatedRrfLabel: "Фактический возврат (RRF %)",
             serverLabel: "Сервер",
-            itemIdLabel: "ID предмета (например: T4_BAG)",
-            searchBtn: "Найти цену на Чёрном Рынке",
+            searchBtn: "Обновить цену на Чёрном Рынке",
             bmPriceTitle: "Цена ордера покупки (Buy Order)",
             bmSellPriceTitle: "Цена продажи (Sell Order)"
         },
@@ -118,12 +121,15 @@ document.addEventListener('DOMContentLoaded', () => {
             activateBtn: "Activate Premium",
             premiumRequired: "Premium Only",
             premiumDesc: "Activate your key in Settings to use this feature.",
-            craftCostLabel: "Resources Cost (Silver)",
+            craftCostLabel: "Material Costs (Silver)",
             rrfLabel: "Resource Return Rate (RRF %)",
             craftRealCost: "Real Crafting Cost",
+            itemSearchLabel: "Item",
+            cityLabel: "Crafting City",
+            useFocusLabel: "Use Focus",
+            calculatedRrfLabel: "Actual Return Rate (RRF %)",
             serverLabel: "Server",
-            itemIdLabel: "Item ID (e.g., T4_BAG)",
-            searchBtn: "Find Black Market Price",
+            searchBtn: "Refresh Black Market Price",
             bmPriceTitle: "Buy Order Price",
             bmSellPriceTitle: "Sell Order Price"
         }
@@ -257,22 +263,127 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // ----- Items Database & Autocomplete -----
+    const fs = require('fs');
+    const path = require('path');
+    let itemsDb = {};
+    
+    try {
+        const itemsPath = path.join(__dirname, 'items-min.json');
+        if (fs.existsSync(itemsPath)) {
+            itemsDb = JSON.parse(fs.readFileSync(itemsPath, 'utf8'));
+        }
+    } catch (e) {
+        console.error("Failed to load items-min.json", e);
+    }
+
+    let craftSelectedItemId = null;
+    let bmSelectedItemId = null;
+
+    function setupAutocomplete(inputId, resultsId, displayId, onSelectCallback) {
+        const input = document.getElementById(inputId);
+        const results = document.getElementById(resultsId);
+        const display = document.getElementById(displayId);
+        
+        if (!input || !results) return;
+
+        input.addEventListener('input', () => {
+            const query = input.value.trim().toLowerCase();
+            results.innerHTML = '';
+            if (query.length < 2) {
+                results.style.display = 'none';
+                return;
+            }
+            
+            let matches = [];
+            for (let id in itemsDb) {
+                const nameRu = (itemsDb[id].ru || '').toLowerCase();
+                const nameEn = (itemsDb[id].en || '').toLowerCase();
+                if (nameRu.includes(query) || nameEn.includes(query) || id.toLowerCase().includes(query)) {
+                    matches.push({ id, nameRu: itemsDb[id].ru, nameEn: itemsDb[id].en });
+                }
+                if (matches.length > 50) break; // limit to 50 results
+            }
+
+            if (matches.length > 0) {
+                matches.forEach(m => {
+                    const div = document.createElement('div');
+                    div.className = 'autocomplete-item';
+                    const iconUrl = `https://render.albiononline.com/v1/item/${m.id}.png`;
+                    div.innerHTML = `<img src="${iconUrl}" class="autocomplete-icon" onerror="this.src='icon.png'"> 
+                                     <span>${currentLang === 'ru' ? m.nameRu : m.nameEn}</span>`;
+                    div.addEventListener('click', () => {
+                        input.value = '';
+                        results.style.display = 'none';
+                        display.innerHTML = `<img src="${iconUrl}" onerror="this.src='icon.png'"> 
+                                             <div>
+                                                <strong>${currentLang === 'ru' ? m.nameRu : m.nameEn}</strong><br>
+                                                <small style="color:var(--text-muted)">${m.id}</small>
+                                             </div>`;
+                        display.style.display = 'flex';
+                        if (onSelectCallback) onSelectCallback(m.id);
+                    });
+                    results.appendChild(div);
+                });
+                results.style.display = 'block';
+            } else {
+                results.style.display = 'none';
+            }
+        });
+
+        // Hide when clicking outside
+        document.addEventListener('click', (e) => {
+            if (e.target !== input && e.target !== results && !results.contains(e.target)) {
+                results.style.display = 'none';
+            }
+        });
+    }
+
+    setupAutocomplete('craft-item-search', 'craft-autocomplete-results', 'craft-selected-item', (id) => {
+        craftSelectedItemId = id;
+    });
+
+    setupAutocomplete('bm-item-search', 'bm-autocomplete-results', 'bm-selected-item', (id) => {
+        bmSelectedItemId = id;
+        document.getElementById('bm-search-btn').click(); // Auto-search on select
+    });
+
     // ----- Crafting Logic -----
     const craftCostInput = document.getElementById('craft-resources-cost');
-    const craftRrfInput = document.getElementById('craft-rrf');
+    const craftCitySelect = document.getElementById('craft-city-select');
+    const craftFocusToggle = document.getElementById('craft-focus');
+    const craftCalculatedRrf = document.getElementById('craft-calculated-rrf');
     const craftFinalCost = document.getElementById('craft-final-cost');
 
     const updateCraftingCost = () => {
-        if(!craftCostInput || !craftRrfInput || !craftFinalCost) return;
+        if(!craftCostInput || !craftFinalCost) return;
         const costStr = craftCostInput.value.replace(/[^0-9]/g, '');
         const cost = parseFloat(costStr) || 0;
-        const rrf = parseFloat(craftRrfInput.value) || 0;
         
+        let rrf = 15.2; // Default city return
+        const city = craftCitySelect ? craftCitySelect.value : 'none';
+        const focus = craftFocusToggle ? craftFocusToggle.checked : false;
+
+        // Simplified RRF logic for demonstration
+        if (city === 'none') {
+            rrf = focus ? 37.1 : 0.0;
+        } else if (city === 'blackzone') {
+            rrf = focus ? 53.9 : 25.0; // Tier 3 HQ approx
+        } else {
+            // Royal cities standard 15.2%, bonus 24.8% without focus
+            // With focus: 43.5% normal, 47.9% bonus
+            // Without knowing exact item category, we will assume standard non-bonus 15.2% / 43.5%
+            // and maybe let user tweak it later. Let's use basic city values:
+            rrf = focus ? 43.5 : 15.2;
+        }
+
+        if (craftCalculatedRrf) craftCalculatedRrf.textContent = rrf.toFixed(1);
+
         const finalCost = cost * (1 - (rrf / 100));
         craftFinalCost.textContent = formatSilver(Math.round(finalCost));
     };
 
-    if (craftCostInput && craftRrfInput) {
+    if (craftCostInput) {
         craftCostInput.addEventListener('input', (e) => {
             const cursor = e.target.selectionStart;
             const originalLength = e.target.value.length;
@@ -282,27 +393,27 @@ document.addEventListener('DOMContentLoaded', () => {
             } else {
                 e.target.value = '';
             }
-            // fix cursor position
             const diff = e.target.value.length - originalLength;
             e.target.setSelectionRange(cursor + diff, cursor + diff);
             updateCraftingCost();
         });
-        craftRrfInput.addEventListener('input', updateCraftingCost);
     }
+    if (craftCitySelect) craftCitySelect.addEventListener('change', updateCraftingCost);
+    if (craftFocusToggle) craftFocusToggle.addEventListener('change', updateCraftingCost);
 
     // ----- Black Market Scanner -----
     const bmSearchBtn = document.getElementById('bm-search-btn');
-    const bmItemId = document.getElementById('bm-item-id');
     const bmServerSelect = document.getElementById('bm-server-select');
     const bmResults = document.getElementById('bm-results-section');
     const bmBuyPrice = document.getElementById('bm-buy-price');
     const bmSellPrice = document.getElementById('bm-sell-price');
-    const bmUpdateTime = document.getElementById('bm-update-time');
+    const bmBuyTime = document.getElementById('bm-buy-time');
+    const bmSellTime = document.getElementById('bm-sell-time');
 
-    if (bmSearchBtn && bmItemId) {
+    if (bmSearchBtn) {
         bmSearchBtn.addEventListener('click', async () => {
-            const itemId = bmItemId.value.trim().toUpperCase();
-            if (!itemId) return;
+            if (!bmSelectedItemId) return;
+            const itemId = bmSelectedItemId;
             
             const server = bmServerSelect.value;
             let baseUrl = 'https://west.albion-online-data.com';
@@ -323,22 +434,23 @@ document.addEventListener('DOMContentLoaded', () => {
                     bmBuyPrice.textContent = formatSilver(item.buy_price_max || 0);
                     bmSellPrice.textContent = formatSilver(item.sell_price_min || 0);
                     
-                    if (item.buy_price_max_date) {
-                        bmUpdateTime.textContent = (currentLang === 'ru' ? 'Обновлено: ' : 'Updated: ') + new Date(item.buy_price_max_date).toLocaleString();
-                    }
+                    bmBuyTime.textContent = item.buy_price_max_date ? new Date(item.buy_price_max_date).toLocaleString() : '-';
+                    bmSellTime.textContent = item.sell_price_min_date ? new Date(item.sell_price_min_date).toLocaleString() : '-';
+                    
                     bmResults.style.display = 'block';
                 } else {
                     bmBuyPrice.textContent = '0';
                     bmSellPrice.textContent = '0';
-                    bmUpdateTime.textContent = currentLang === 'ru' ? 'Нет данных' : 'No data';
+                    bmBuyTime.textContent = currentLang === 'ru' ? 'Нет данных' : 'No data';
+                    bmSellTime.textContent = '-';
                     bmResults.style.display = 'block';
                 }
             } catch (err) {
                 console.error(err);
-                bmUpdateTime.textContent = 'API Error';
+                bmBuyTime.textContent = 'API Error';
             }
 
-            bmSearchBtn.textContent = currentLang === 'ru' ? 'Найти цену на Чёрном Рынке' : 'Find Black Market Price';
+            bmSearchBtn.textContent = currentLang === 'ru' ? 'Обновить цену на Чёрном Рынке' : 'Refresh Black Market Price';
             bmSearchBtn.disabled = false;
         });
     }

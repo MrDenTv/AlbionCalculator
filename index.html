@@ -206,22 +206,53 @@
             <div class="scrollable-content premium-content" id="content-crafting" style="display: none;">
                 <div class="input-section">
                     <div class="input-group">
-                        <label data-i18n="craftCostLabel">Стоимость ресурсов (Silver)</label>
-                        <div class="input-wrapper">
+                        <label data-i18n="itemSearchLabel">Предмет</label>
+                        <div class="autocomplete-wrapper" style="position: relative; margin-top: 8px;">
+                            <input type="text" id="craft-item-search" placeholder="Начните вводить (напр: Сумка)" autocomplete="off">
+                            <div id="craft-autocomplete-results" class="autocomplete-dropdown"></div>
+                        </div>
+                    </div>
+                    <div id="craft-selected-item" class="selected-item-display" style="display:none; margin-top: 12px;"></div>
+                    
+                    <div class="input-group" style="margin-top: 16px;">
+                        <label data-i18n="cityLabel">Город крафта</label>
+                        <select id="craft-city-select" class="styled-select">
+                            <option value="none">Без бонуса (Остров)</option>
+                            <option value="martlock">Martlock</option>
+                            <option value="thetford">Thetford</option>
+                            <option value="fortsterling">Fort Sterling</option>
+                            <option value="lymhurst">Lymhurst</option>
+                            <option value="bridgewatch">Bridgewatch</option>
+                            <option value="caerleon">Caerleon</option>
+                            <option value="blackzone">Black Zone (Убежище)</option>
+                        </select>
+                    </div>
+
+                    <div class="checkbox-group" style="margin-top: 16px;">
+                        <label class="custom-checkbox">
+                            <input type="checkbox" id="craft-focus">
+                            <span class="checkmark"></span>
+                            <span data-i18n="useFocusLabel">Использовать Фокус</span>
+                        </label>
+                    </div>
+
+                    <div class="input-group" style="margin-top: 16px;">
+                        <label data-i18n="craftCostLabel">Затраты на материалы (Silver)</label>
+                        <div class="input-wrapper" style="margin-top: 8px;">
                             <input type="text" id="craft-resources-cost" placeholder="0" inputmode="numeric">
                             <span class="currency-icon">🪙</span>
                         </div>
                     </div>
-                    <div class="input-group">
-                        <label data-i18n="rrfLabel">Процент возврата ресурсов (RRF %)</label>
-                        <div class="input-wrapper">
-                            <input type="number" id="craft-rrf" placeholder="15.2" min="0" max="100" step="0.1">
+                </div>
+                <div class="results-section">
+                    <div class="result-card primary-result" style="background: rgba(255,255,255,0.05); border: 1px solid var(--border-color);">
+                        <h3 data-i18n="calculatedRrfLabel">Фактический возврат (RRF %)</h3>
+                        <div class="amount-display">
+                            <span id="craft-calculated-rrf" style="color: var(--warning);">15.2</span>
                             <span class="percent-symbol">%</span>
                         </div>
                     </div>
-                </div>
-                <div class="results-section">
-                    <div class="result-card primary-result">
+                    <div class="result-card primary-result" style="margin-top: 12px;">
                         <h3 data-i18n="craftRealCost">Реальная себестоимость</h3>
                         <div class="amount-display">
                             <span id="craft-final-cost">0</span>
@@ -243,35 +274,39 @@
                 <div class="input-section">
                     <div class="input-group">
                         <label data-i18n="serverLabel">Сервер</label>
-                        <select id="bm-server-select" class="styled-select">
+                        <select id="bm-server-select" class="styled-select" style="margin-top: 8px;">
                             <option value="europe">Europe</option>
                             <option value="west">Americas (West)</option>
                             <option value="east">Asia (East)</option>
                         </select>
                     </div>
-                    <div class="input-group" style="margin-top: 12px;">
-                        <label data-i18n="itemIdLabel">ID предмета (например: T4_BAG)</label>
-                        <div class="input-wrapper">
-                            <input type="text" id="bm-item-id" placeholder="T4_BAG">
+                    <div class="input-group" style="margin-top: 16px;">
+                        <label data-i18n="itemSearchLabel">Предмет</label>
+                        <div class="autocomplete-wrapper" style="position: relative; margin-top: 8px;">
+                            <input type="text" id="bm-item-search" placeholder="Начните вводить (напр: Сумка)" autocomplete="off">
+                            <div id="bm-autocomplete-results" class="autocomplete-dropdown"></div>
                         </div>
-                        <button id="bm-search-btn" class="action-btn" style="margin-top: 8px;" data-i18n="searchBtn">Найти цену на Чёрном Рынке</button>
                     </div>
+                    <div id="bm-selected-item" class="selected-item-display" style="display:none; margin-top: 12px;"></div>
+                    
+                    <button id="bm-search-btn" class="action-btn" style="margin-top: 16px;" data-i18n="searchBtn">Обновить цену на Чёрном Рынке</button>
                 </div>
-                <div class="results-section" id="bm-results-section" style="display:none;">
+                <div class="results-section" id="bm-results-section" style="display:none; margin-top: 16px;">
                     <div class="result-card primary-result">
-                        <h3 data-i18n="bmPriceTitle">Цена ордера покупки (Buy Order)</h3>
-                        <div class="amount-display">
-                            <span id="bm-buy-price">0</span>
-                            <span class="currency-icon">🪙</span>
-                        </div>
-                        <p id="bm-update-time" style="font-size: 12px; color: var(--text-muted); margin-top: 8px;"></p>
-                    </div>
-                    <div class="result-card secondary-result">
                         <h3 data-i18n="bmSellPriceTitle">Цена продажи (Sell Order)</h3>
-                        <div class="amount-display profit-display" style="color: var(--text-color);">
+                        <div class="amount-display profit-display" style="color: var(--success);">
                             <span id="bm-sell-price">0</span>
                             <span class="currency-icon">🪙</span>
                         </div>
+                        <p id="bm-sell-time" style="font-size: 12px; color: var(--text-muted); margin-top: 8px;"></p>
+                    </div>
+                    <div class="result-card secondary-result">
+                        <h3 data-i18n="bmPriceTitle">Цена ордера покупки (Buy Order)</h3>
+                        <div class="amount-display" style="color: var(--text-color);">
+                            <span id="bm-buy-price">0</span>
+                            <span class="currency-icon">🪙</span>
+                        </div>
+                        <p id="bm-buy-time" style="font-size: 12px; color: var(--text-muted); margin-top: 8px;"></p>
                     </div>
                 </div>
             </div>
