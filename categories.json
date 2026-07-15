@@ -1,103 +1,103 @@
-{
+п»ї{
   "accessories": {
-    "nameRu": "Аксессуары (Сумки, Плащи)",
+    "nameRu": "РђРєСЃРµСЃСЃСѓР°СЂС‹ (РЎСѓРјРєРё, РџР»Р°С‰Рё)",
     "nameEn": "Accessories (Bags, Capes)",
     "items": [
-      { "id": "BAG", "nameRu": "Сумка", "nameEn": "Bag" },
-      { "id": "CAPE", "nameRu": "Обычный плащ", "nameEn": "Cape" },
-      { "id": "CAPEITEM_FW_BRIDGEWATCH", "nameRu": "Плащ Bridgewatch", "nameEn": "Bridgewatch Cape" },
-      { "id": "CAPEITEM_FW_FORTSTERLING", "nameRu": "Плащ Fort Sterling", "nameEn": "Fort Sterling Cape" },
-      { "id": "CAPEITEM_FW_LYMHURST", "nameRu": "Плащ Lymhurst", "nameEn": "Lymhurst Cape" },
-      { "id": "CAPEITEM_FW_MARTLOCK", "nameRu": "Плащ Martlock", "nameEn": "Martlock Cape" },
-      { "id": "CAPEITEM_FW_THETFORD", "nameRu": "Плащ Thetford", "nameEn": "Thetford Cape" },
-      { "id": "CAPEITEM_FW_CAERLEON", "nameRu": "Плащ Caerleon", "nameEn": "Caerleon Cape" }
+      { "id": "BAG", "nameRu": "РЎСѓРјРєР°", "nameEn": "Bag" },
+      { "id": "CAPE", "nameRu": "РћР±С‹С‡РЅС‹Р№ РїР»Р°С‰", "nameEn": "Cape" },
+      { "id": "CAPEITEM_FW_BRIDGEWATCH", "nameRu": "РџР»Р°С‰ Bridgewatch", "nameEn": "Bridgewatch Cape" },
+      { "id": "CAPEITEM_FW_FORTSTERLING", "nameRu": "РџР»Р°С‰ Fort Sterling", "nameEn": "Fort Sterling Cape" },
+      { "id": "CAPEITEM_FW_LYMHURST", "nameRu": "РџР»Р°С‰ Lymhurst", "nameEn": "Lymhurst Cape" },
+      { "id": "CAPEITEM_FW_MARTLOCK", "nameRu": "РџР»Р°С‰ Martlock", "nameEn": "Martlock Cape" },
+      { "id": "CAPEITEM_FW_THETFORD", "nameRu": "РџР»Р°С‰ Thetford", "nameEn": "Thetford Cape" },
+      { "id": "CAPEITEM_FW_CAERLEON", "nameRu": "РџР»Р°С‰ Caerleon", "nameEn": "Caerleon Cape" }
     ]
   },
   "armor_cloth": {
-    "nameRu": "Тканевая броня (Маги)",
+    "nameRu": "РўРєР°РЅРµРІР°СЏ Р±СЂРѕРЅСЏ (РњР°РіРё)",
     "nameEn": "Cloth Armor (Mage)",
     "items": [
-      { "id": "HEAD_CLOTH_SET1", "nameRu": "Колпак ученого", "nameEn": "Scholar Cowl" },
-      { "id": "ARMOR_CLOTH_SET1", "nameRu": "Мантия ученого", "nameEn": "Scholar Robe" },
-      { "id": "SHOES_CLOTH_SET1", "nameRu": "Сандалии ученого", "nameEn": "Scholar Sandals" },
-      { "id": "HEAD_CLOTH_SET2", "nameRu": "Колпак клирика", "nameEn": "Cleric Cowl" },
-      { "id": "ARMOR_CLOTH_SET2", "nameRu": "Мантия клирика", "nameEn": "Cleric Robe" },
-      { "id": "SHOES_CLOTH_SET2", "nameRu": "Сандалии клирика", "nameEn": "Cleric Sandals" },
-      { "id": "HEAD_CLOTH_SET3", "nameRu": "Колпак чародея", "nameEn": "Mage Cowl" },
-      { "id": "ARMOR_CLOTH_SET3", "nameRu": "Мантия чародея", "nameEn": "Mage Robe" },
-      { "id": "SHOES_CLOTH_SET3", "nameRu": "Сандалии чародея", "nameEn": "Mage Sandals" }
+      { "id": "HEAD_CLOTH_SET1", "nameRu": "РљРѕР»РїР°Рє СѓС‡РµРЅРѕРіРѕ", "nameEn": "Scholar Cowl" },
+      { "id": "ARMOR_CLOTH_SET1", "nameRu": "РњР°РЅС‚РёСЏ СѓС‡РµРЅРѕРіРѕ", "nameEn": "Scholar Robe" },
+      { "id": "SHOES_CLOTH_SET1", "nameRu": "РЎР°РЅРґР°Р»РёРё СѓС‡РµРЅРѕРіРѕ", "nameEn": "Scholar Sandals" },
+      { "id": "HEAD_CLOTH_SET2", "nameRu": "РљРѕР»РїР°Рє РєР»РёСЂРёРєР°", "nameEn": "Cleric Cowl" },
+      { "id": "ARMOR_CLOTH_SET2", "nameRu": "РњР°РЅС‚РёСЏ РєР»РёСЂРёРєР°", "nameEn": "Cleric Robe" },
+      { "id": "SHOES_CLOTH_SET2", "nameRu": "РЎР°РЅРґР°Р»РёРё РєР»РёСЂРёРєР°", "nameEn": "Cleric Sandals" },
+      { "id": "HEAD_CLOTH_SET3", "nameRu": "РљРѕР»РїР°Рє С‡Р°СЂРѕРґРµСЏ", "nameEn": "Mage Cowl" },
+      { "id": "ARMOR_CLOTH_SET3", "nameRu": "РњР°РЅС‚РёСЏ С‡Р°СЂРѕРґРµСЏ", "nameEn": "Mage Robe" },
+      { "id": "SHOES_CLOTH_SET3", "nameRu": "РЎР°РЅРґР°Р»РёРё С‡Р°СЂРѕРґРµСЏ", "nameEn": "Mage Sandals" }
     ]
   },
   "armor_leather": {
-    "nameRu": "Кожаная броня (Охотники)",
+    "nameRu": "РљРѕР¶Р°РЅР°СЏ Р±СЂРѕРЅСЏ (РћС…РѕС‚РЅРёРєРё)",
     "nameEn": "Leather Armor (Hunter)",
     "items": [
-      { "id": "HEAD_LEATHER_SET1", "nameRu": "Капюшон наемника", "nameEn": "Mercenary Hood" },
-      { "id": "ARMOR_LEATHER_SET1", "nameRu": "Куртка наемника", "nameEn": "Mercenary Jacket" },
-      { "id": "SHOES_LEATHER_SET1", "nameRu": "Ботинки наемника", "nameEn": "Mercenary Shoes" },
-      { "id": "HEAD_LEATHER_SET2", "nameRu": "Капюшон охотника", "nameEn": "Hunter Hood" },
-      { "id": "ARMOR_LEATHER_SET2", "nameRu": "Куртка охотника", "nameEn": "Hunter Jacket" },
-      { "id": "SHOES_LEATHER_SET2", "nameRu": "Ботинки охотника", "nameEn": "Hunter Shoes" },
-      { "id": "HEAD_LEATHER_SET3", "nameRu": "Капюшон убийцы", "nameEn": "Assassin Hood" },
-      { "id": "ARMOR_LEATHER_SET3", "nameRu": "Куртка убийцы", "nameEn": "Assassin Jacket" },
-      { "id": "SHOES_LEATHER_SET3", "nameRu": "Ботинки убийцы", "nameEn": "Assassin Shoes" }
+      { "id": "HEAD_LEATHER_SET1", "nameRu": "РљР°РїСЋС€РѕРЅ РЅР°РµРјРЅРёРєР°", "nameEn": "Mercenary Hood" },
+      { "id": "ARMOR_LEATHER_SET1", "nameRu": "РљСѓСЂС‚РєР° РЅР°РµРјРЅРёРєР°", "nameEn": "Mercenary Jacket" },
+      { "id": "SHOES_LEATHER_SET1", "nameRu": "Р‘РѕС‚РёРЅРєРё РЅР°РµРјРЅРёРєР°", "nameEn": "Mercenary Shoes" },
+      { "id": "HEAD_LEATHER_SET2", "nameRu": "РљР°РїСЋС€РѕРЅ РѕС…РѕС‚РЅРёРєР°", "nameEn": "Hunter Hood" },
+      { "id": "ARMOR_LEATHER_SET2", "nameRu": "РљСѓСЂС‚РєР° РѕС…РѕС‚РЅРёРєР°", "nameEn": "Hunter Jacket" },
+      { "id": "SHOES_LEATHER_SET2", "nameRu": "Р‘РѕС‚РёРЅРєРё РѕС…РѕС‚РЅРёРєР°", "nameEn": "Hunter Shoes" },
+      { "id": "HEAD_LEATHER_SET3", "nameRu": "РљР°РїСЋС€РѕРЅ СѓР±РёР№С†С‹", "nameEn": "Assassin Hood" },
+      { "id": "ARMOR_LEATHER_SET3", "nameRu": "РљСѓСЂС‚РєР° СѓР±РёР№С†С‹", "nameEn": "Assassin Jacket" },
+      { "id": "SHOES_LEATHER_SET3", "nameRu": "Р‘РѕС‚РёРЅРєРё СѓР±РёР№С†С‹", "nameEn": "Assassin Shoes" }
     ]
   },
   "armor_plate": {
-    "nameRu": "Латная броня (Воины)",
+    "nameRu": "Р›Р°С‚РЅР°СЏ Р±СЂРѕРЅСЏ (Р’РѕРёРЅС‹)",
     "nameEn": "Plate Armor (Warrior)",
     "items": [
-      { "id": "HEAD_PLATE_SET1", "nameRu": "Шлем солдата", "nameEn": "Soldier Helmet" },
-      { "id": "ARMOR_PLATE_SET1", "nameRu": "Броня солдата", "nameEn": "Soldier Armor" },
-      { "id": "SHOES_PLATE_SET1", "nameRu": "Сапоги солдата", "nameEn": "Soldier Boots" },
-      { "id": "HEAD_PLATE_SET2", "nameRu": "Шлем рыцаря", "nameEn": "Knight Helmet" },
-      { "id": "ARMOR_PLATE_SET2", "nameRu": "Броня рыцаря", "nameEn": "Knight Armor" },
-      { "id": "SHOES_PLATE_SET2", "nameRu": "Сапоги рыцаря", "nameEn": "Knight Boots" },
-      { "id": "HEAD_PLATE_SET3", "nameRu": "Шлем хранителя", "nameEn": "Guardian Helmet" },
-      { "id": "ARMOR_PLATE_SET3", "nameRu": "Броня хранителя", "nameEn": "Guardian Armor" },
-      { "id": "SHOES_PLATE_SET3", "nameRu": "Сапоги хранителя", "nameEn": "Guardian Boots" }
+      { "id": "HEAD_PLATE_SET1", "nameRu": "РЁР»РµРј СЃРѕР»РґР°С‚Р°", "nameEn": "Soldier Helmet" },
+      { "id": "ARMOR_PLATE_SET1", "nameRu": "Р‘СЂРѕРЅСЏ СЃРѕР»РґР°С‚Р°", "nameEn": "Soldier Armor" },
+      { "id": "SHOES_PLATE_SET1", "nameRu": "РЎР°РїРѕРіРё СЃРѕР»РґР°С‚Р°", "nameEn": "Soldier Boots" },
+      { "id": "HEAD_PLATE_SET2", "nameRu": "РЁР»РµРј СЂС‹С†Р°СЂСЏ", "nameEn": "Knight Helmet" },
+      { "id": "ARMOR_PLATE_SET2", "nameRu": "Р‘СЂРѕРЅСЏ СЂС‹С†Р°СЂСЏ", "nameEn": "Knight Armor" },
+      { "id": "SHOES_PLATE_SET2", "nameRu": "РЎР°РїРѕРіРё СЂС‹С†Р°СЂСЏ", "nameEn": "Knight Boots" },
+      { "id": "HEAD_PLATE_SET3", "nameRu": "РЁР»РµРј С…СЂР°РЅРёС‚РµР»СЏ", "nameEn": "Guardian Helmet" },
+      { "id": "ARMOR_PLATE_SET3", "nameRu": "Р‘СЂРѕРЅСЏ С…СЂР°РЅРёС‚РµР»СЏ", "nameEn": "Guardian Armor" },
+      { "id": "SHOES_PLATE_SET3", "nameRu": "РЎР°РїРѕРіРё С…СЂР°РЅРёС‚РµР»СЏ", "nameEn": "Guardian Boots" }
     ]
   },
   "weapons_melee": {
-    "nameRu": "Оружие ближнего боя",
+    "nameRu": "РћСЂСѓР¶РёРµ Р±Р»РёР¶РЅРµРіРѕ Р±РѕСЏ",
     "nameEn": "Melee Weapons",
     "items": [
-      { "id": "MAIN_SWORD", "nameRu": "Широкий меч", "nameEn": "Broadsword" },
-      { "id": "2H_CLAYMORE", "nameRu": "Клеймор", "nameEn": "Claymore" },
-      { "id": "MAIN_SPEAR", "nameRu": "Копье", "nameEn": "Spear" },
-      { "id": "MAIN_DAGGER", "nameRu": "Кинжал", "nameEn": "Dagger" }
+      { "id": "MAIN_SWORD", "nameRu": "РЁРёСЂРѕРєРёР№ РјРµС‡", "nameEn": "Broadsword" },
+      { "id": "2H_CLAYMORE", "nameRu": "РљР»РµР№РјРѕСЂ", "nameEn": "Claymore" },
+      { "id": "MAIN_SPEAR", "nameRu": "РљРѕРїСЊРµ", "nameEn": "Spear" },
+      { "id": "MAIN_DAGGER", "nameRu": "РљРёРЅР¶Р°Р»", "nameEn": "Dagger" }
     ]
   },
   "weapons_ranged": {
-    "nameRu": "Оружие дальнего боя",
+    "nameRu": "РћСЂСѓР¶РёРµ РґР°Р»СЊРЅРµРіРѕ Р±РѕСЏ",
     "nameEn": "Ranged Weapons",
     "items": [
-      { "id": "2H_BOW", "nameRu": "Лук", "nameEn": "Bow" },
-      { "id": "2H_WARBOW", "nameRu": "Боевой лук", "nameEn": "Warbow" },
-      { "id": "2H_CROSSBOW", "nameRu": "Арбалет", "nameEn": "Crossbow" },
-      { "id": "MAIN_1HCROSSBOW", "nameRu": "Легкий арбалет", "nameEn": "Light Crossbow" }
+      { "id": "2H_BOW", "nameRu": "Р›СѓРє", "nameEn": "Bow" },
+      { "id": "2H_WARBOW", "nameRu": "Р‘РѕРµРІРѕР№ Р»СѓРє", "nameEn": "Warbow" },
+      { "id": "2H_CROSSBOW", "nameRu": "РђСЂР±Р°Р»РµС‚", "nameEn": "Crossbow" },
+      { "id": "MAIN_1HCROSSBOW", "nameRu": "Р›РµРіРєРёР№ Р°СЂР±Р°Р»РµС‚", "nameEn": "Light Crossbow" }
     ]
   },
   "weapons_magic": {
-    "nameRu": "Магическое оружие",
+    "nameRu": "РњР°РіРёС‡РµСЃРєРѕРµ РѕСЂСѓР¶РёРµ",
     "nameEn": "Magic Weapons",
     "items": [
-      { "id": "MAIN_FIRESTAFF", "nameRu": "Огненный посох", "nameEn": "Fire Staff" },
-      { "id": "MAIN_HOLYSTAFF", "nameRu": "Священный посох", "nameEn": "Holy Staff" },
-      { "id": "MAIN_NATURESTAFF", "nameRu": "Древесный посох", "nameEn": "Nature Staff" },
-      { "id": "MAIN_ARCANESTAFF", "nameRu": "Мистический посох", "nameEn": "Arcane Staff" },
-      { "id": "MAIN_FROSTSTAFF", "nameRu": "Ледяной посох", "nameEn": "Frost Staff" },
-      { "id": "MAIN_CURSEDSTAFF", "nameRu": "Проклятый посох", "nameEn": "Cursed Staff" }
+      { "id": "MAIN_FIRESTAFF", "nameRu": "РћРіРЅРµРЅРЅС‹Р№ РїРѕСЃРѕС…", "nameEn": "Fire Staff" },
+      { "id": "MAIN_HOLYSTAFF", "nameRu": "РЎРІСЏС‰РµРЅРЅС‹Р№ РїРѕСЃРѕС…", "nameEn": "Holy Staff" },
+      { "id": "MAIN_NATURESTAFF", "nameRu": "Р”СЂРµРІРµСЃРЅС‹Р№ РїРѕСЃРѕС…", "nameEn": "Nature Staff" },
+      { "id": "MAIN_ARCANESTAFF", "nameRu": "РњРёСЃС‚РёС‡РµСЃРєРёР№ РїРѕСЃРѕС…", "nameEn": "Arcane Staff" },
+      { "id": "MAIN_FROSTSTAFF", "nameRu": "Р›РµРґСЏРЅРѕР№ РїРѕСЃРѕС…", "nameEn": "Frost Staff" },
+      { "id": "MAIN_CURSEDSTAFF", "nameRu": "РџСЂРѕРєР»СЏС‚С‹Р№ РїРѕСЃРѕС…", "nameEn": "Cursed Staff" }
     ]
   },
   "offhand": {
-    "nameRu": "Левая рука (Щиты, Книги)",
+    "nameRu": "Р›РµРІР°СЏ СЂСѓРєР° (Р©РёС‚С‹, РљРЅРёРіРё)",
     "nameEn": "Off-Hand",
     "items": [
-      { "id": "OFF_SHIELD", "nameRu": "Щит", "nameEn": "Shield" },
-      { "id": "OFF_BOOK", "nameRu": "Книга заклинаний", "nameEn": "Tome of Spells" },
-      { "id": "OFF_TORCH", "nameRu": "Факел", "nameEn": "Torch" },
-      { "id": "OFF_HORN", "nameRu": "Рог", "nameEn": "Mistcaller" }
+      { "id": "OFF_SHIELD", "nameRu": "Р©РёС‚", "nameEn": "Shield" },
+      { "id": "OFF_BOOK", "nameRu": "РљРЅРёРіР° Р·Р°РєР»РёРЅР°РЅРёР№", "nameEn": "Tome of Spells" },
+      { "id": "OFF_TORCH", "nameRu": "Р¤Р°РєРµР»", "nameEn": "Torch" },
+      { "id": "OFF_HORN", "nameRu": "Р РѕРі", "nameEn": "Mistcaller" }
     ]
   }
 }
